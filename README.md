@@ -19,7 +19,7 @@ The **learning goals** for this project is:
 ## Project Title Lorem ipsum dolor sit amet
 Term: Spring 2022
 
-+ Team #
++ Team #5
 + **Projec title**: + Team members
 	+ Kurihara, Sarah sqk2003@columbia.edu
 	+ Shao, Jiahao js5954@columbia.edu
