@@ -17,6 +17,7 @@ library(RSocrata) # Read data from NYC OpenData
 ```
 
 ```{r read_datar, message=F, warning=F}
+# Read data set online
 homeless <- read.socrata(
   "https://data.cityofnewyork.us/resource/ur7y-ziyb.json",
   app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
@@ -40,6 +41,7 @@ homeless %>%
   select(date = report_date, borough, community_district, count) %>%
   filter(date >= as.Date("2020-03-01")) -> homeless_tidy # after 2020/03/01 (covid period)
 
+# save files
 write.csv(homeless_tidy, "../data/homeless_tidy.csv", row.names = FALSE)
 
 covid %>%
@@ -49,9 +51,16 @@ covid %>%
   filter(date >= as.Date("2020-03-01")) %>%              # after 2020/03/01 (covid period)
   transform(month_year = as.numeric(format(as.Date(date), "%m%y"))) %>%  
   group_by(month_year) %>%  # calculate total cases by month
-  summarise(case_count = sum(case_count), death_count = sum(death_count)) %>%   
-  mutate(date = ceiling_date(my(month_year), unit = "month") - 1) %>%
+  summarise(case_count = sum(case_count), death_count = sum(death_count)) %>% # calculate total cases   
+  mutate(date = ceiling_date(my(month_year), unit = "month") - 1) %>% 
+  # transform the first day of month to the last day of month
   select(date, case_count, death_count) -> covid_tidy
 
+# save files
 write.csv(covid_tidy, "../data/covid_tidy.csv", row.names = FALSE)
+```
+
+```{r combine_data, message=F, warning=F}
+# Combine our data set
+
 ```
