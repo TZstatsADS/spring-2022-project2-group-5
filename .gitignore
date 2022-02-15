@@ -2,4 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+<<<<<<< HEAD
 .doc.Rproj
+=======
+doc.Rproj
+>>>>>>> defb66bbe31031a3dfec14e5e2ddf7aae7178af7
