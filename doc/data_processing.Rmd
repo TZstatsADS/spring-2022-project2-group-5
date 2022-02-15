@@ -15,3 +15,23 @@ library(zoo)
 
 library(RSocrata) # Read data from NYC OpenData
 ```
+
+```{read_data, message=F, warning=F}
+homeless <- read.socrata(
+  "https://data.cityofnewyork.us/resource/ur7y-ziyb.json",
+  app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
+  email     = "hz2694@columbia.edu",
+  password  = "9N6nrWC*y5#3zwG"
+)
+
+covid <- read.socrata(
+  "https://data.cityofnewyork.us/resource/rc75-m7u3.json",
+  app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
+  email     = "hz2694@columbia.edu",
+  password  = "9N6nrWC*y5#3zwG"
+)
+```
+
+```{data_process, message = F, warning = F}
+
+```
