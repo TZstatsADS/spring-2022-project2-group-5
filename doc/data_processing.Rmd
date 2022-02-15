@@ -1,0 +1,17 @@
+---
+title: "data_processing"
+output: html_document
+---
+
+```{library, message=F, warning=F}
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(lubridate)
+library(zoo)
+
+## Install the required package with:
+## install.packages("RSocrata")
+
+library(RSocrata) # Read data from NYC OpenData
+```
