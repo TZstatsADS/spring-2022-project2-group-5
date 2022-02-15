@@ -31,6 +31,13 @@ covid <- read.socrata(
   email     = "hz2694@columbia.edu",
   password  = "9N6nrWC*y5#3zwG"
 )
+
+shelters <-  read.socrata(
+  "https://data.cityofnewyork.us/resource/bmxf-3rd4.json",
+  app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
+  email     = "hz2694@columbia.edu",
+  password  = "9N6nrWC*y5#3zwG"
+)
 ```
 
 ```{r data_process, message = F, warning = F}
@@ -58,6 +65,12 @@ covid %>%
 
 # save files
 write.csv(covid_tidy, "../data/covid_tidy.csv", row.names = FALSE)
+
+shelters %>%
+  select(name = center_name, borough, address, postcode:council_district) -> shelters_tidy
+
+# save files
+write.csv(shelters_tidy, "../data/shelters_tidy.csv", row.names = FALSE)
 ```
 
 ```{r combine_data, message=F, warning=F}
