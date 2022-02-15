@@ -3,7 +3,7 @@ title: "data_processing"
 output: html_document
 ---
 
-```{library, message=F, warning=F}
+```{r library, message=F, warning=F}
 library(tidyverse)
 library(dplyr)
 library(knitr)
@@ -16,7 +16,7 @@ library(zoo)
 library(RSocrata) # Read data from NYC OpenData
 ```
 
-```{read_data, message=F, warning=F}
+```{r read_datar, message=F, warning=F}
 homeless <- read.socrata(
   "https://data.cityofnewyork.us/resource/ur7y-ziyb.json",
   app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
@@ -32,6 +32,26 @@ covid <- read.socrata(
 )
 ```
 
-```{data_process, message = F, warning = F}
+```{r data_process, message = F, warning = F}
+# There is only one case for covid in 2020 Feb, hence we chose data after 2020/03/01
+homeless %>%
+  mutate(across(individuals, ~ ifelse(is.na(.), 0, .))) %>%  # remove na (if needed)
+  mutate(count = as.numeric(individuals)) %>%
+  select(date = report_date, borough, community_district, count) %>%
+  filter(date >= as.Date("2020-03-01")) -> homeless_tidy # after 2020/03/01 (covid period)
 
+write.csv(homeless_tidy, "../data/homeless_tidy.csv", row.names = FALSE)
+
+covid %>%
+  select(date = date_of_interest, case_count, death_count) %>%
+  mutate(case_count = as.numeric(case_count),
+         death_count = as.numeric(death_count)) %>%
+  filter(date >= as.Date("2020-03-01")) %>%              # after 2020/03/01 (covid period)
+  transform(month_year = as.numeric(format(as.Date(date), "%m%y"))) %>%  
+  group_by(month_year) %>%  # calculate total cases by month
+  summarise(case_count = sum(case_count), death_count = sum(death_count)) %>%   
+  mutate(date = ceiling_date(my(month_year), unit = "month") - 1) %>%
+  select(date, case_count, death_count) -> covid_tidy
+
+write.csv(covid_tidy, "../data/covid_tidy.csv", row.names = FALSE)
 ```
