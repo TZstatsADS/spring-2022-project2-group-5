@@ -62,5 +62,9 @@ write.csv(covid_tidy, "../data/covid_tidy.csv", row.names = FALSE)
 
 ```{r combine_data, message=F, warning=F}
 # Combine our data set
+homeless_tidy %>%  # combine data set
+  left_join(covid_tidy, date = date) -> homeless_covid
 
+# save files
+write.csv(homeless_covid, "../data/homeless_covid.csv", row.names = FALSE)
 ```
