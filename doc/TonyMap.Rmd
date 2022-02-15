@@ -13,5 +13,11 @@ library(rworldmap)
 ```
 
 ```{r read_data, message=F, warning=F}
+homeless_tidy <- read.csv("../data/homeless_tidy.csv")
+
+worldMap <- getMap(resolution = "high")
+country <- c("United States")
+ind <- which(worldMap$NAME %in% country)
+
 
 ```
