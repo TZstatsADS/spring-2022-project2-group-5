@@ -1,0 +1,17 @@
+---
+title: "map"
+author: "Tony"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+library(rworldmap)
+```
+
+```{r read_data, message=F, warning=F}
+
+```
