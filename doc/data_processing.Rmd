@@ -48,6 +48,25 @@ homeless %>%
   select(date = report_date, borough, community_district, count) %>%
   filter(date >= as.Date("2020-03-01")) -> homeless_tidy # after 2020/03/01 (covid period)
 
+homeless_tidy %>% # Filter district with unkown CD
+  filter(community_district == "Unknown CD") %>%
+  mutate(community_district = ifelse(borough == "Bronx", "26",
+                               ifelse(borough == "Brooklyn", "55",
+                               ifelse(borough == "Manhattan", "16",
+                               ifelse(borough == "Queens", "82", "95"))))) -> df
+
+homeless_tidy %>% # Fills with interactive area code
+  filter(community_district != "Unknown CD") %>%
+  rbind(df) %>%
+  arrange(date, borough) %>%
+  mutate(community_district = as.numeric(community_district)) %>%
+  mutate(borough_code = ifelse(borough == "Bronx", 2,
+                               ifelse(borough == "Brooklyn", 3,
+                               ifelse(borough == "Manhattan", 1,
+                               ifelse(borough == "Queens", 4, 5))))) %>%
+  mutate(BoroCD = ifelse(community_district <10, paste(borough_code, 0, community_district, sep = ""),
+                         paste(borough_code, community_district, sep = ""))) -> homeless_tidy
+
 # save files
 write.csv(homeless_tidy, "../data/homeless_tidy.csv", row.names = FALSE)
 
