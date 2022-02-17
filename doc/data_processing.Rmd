@@ -48,6 +48,14 @@ homeless %>%
   select(date = report_date, borough, community_district, count) %>%
   filter(date >= as.Date("2020-03-01")) -> homeless_tidy # after 2020/03/01 (covid period)
 
+# Processing with community district (interactive area)
+# We divide count by each special CD in the borough
+# 164 Central Park, 226 Van Cortlandt Park 227 Bronx Park 228 Pelham Bay Park
+# 355 Prospect Park 356 Brooklyn Gateway National Recreational Area
+# 480 LaGuardia Airport 481 Flushing Meadow/Corona Park 482 Forest Park
+# 483 JFK International Airport 484 Queens Gateway National Recreational Area
+# 595 Staten Island Gateway National Recreational Area
+
 homeless_tidy %>% # Filter district with unkown CD
   filter(community_district == "Unknown CD") %>%
   mutate(community_district = ifelse(borough == "Bronx", "26",
@@ -55,9 +63,54 @@ homeless_tidy %>% # Filter district with unkown CD
                                ifelse(borough == "Manhattan", "16",
                                ifelse(borough == "Queens", "82", "95"))))) -> df
 
+df %>%
+  filter(borough == "Bronx") %>%
+  mutate(count = count / 3) -> Bronx_1
+
+Bronx_1 %>%
+  mutate(community_district = 27) -> Bronx_2
+
+Bronx_1 %>%
+  mutate(community_district = 28) -> Bronx_3
+
+df %>%
+  filter(borough == "Brooklyn") %>%
+  mutate(count = count / 2) -> Brooklyn_1
+
+Brooklyn_1 %>%
+  mutate(community_district = 56) -> Brooklyn_2
+
+df %>%
+  filter(borough == "Queens") %>%
+  mutate(count = count / 5) -> Queens_1
+
+Queens_1 %>%
+  mutate(community_district = 80) -> Queens_2
+
+Queens_1 %>%
+  mutate(community_district = 81) -> Queens_3
+
+Queens_1 %>%
+  mutate(community_district = 83) -> Queens_4
+
+Queens_1 %>%
+  mutate(community_district = 84) -> Queens_5
+
+df %>%
+  filter(borough == "Manhattan") -> Manhattan
+
+df %>%
+  filter(borough == "Staten Island") -> Staten_Island
+
+Bronx_1 %>%
+  rbind(Bronx_2, Bronx_3, Brooklyn_1, Brooklyn_2, Queens_1, Queens_2,
+        Queens_3, Queens_4, Queens_5, Manhattan, Staten_Island) %>%
+  arrange(community_district) -> h
+ 
+
 homeless_tidy %>% # Fills with interactive area code
   filter(community_district != "Unknown CD") %>%
-  rbind(df) %>%
+  rbind(h) %>%
   arrange(date, borough) %>%
   mutate(community_district = as.numeric(community_district)) %>%
   mutate(borough_code = ifelse(borough == "Bronx", 2,
