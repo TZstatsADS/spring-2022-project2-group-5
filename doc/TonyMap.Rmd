@@ -12,20 +12,34 @@ library(dplyr)
 library(rworldmap)
 library(rgdal)
 library(ggplot2)
+library(RSocrata)
 ```
 
 ```{r read_data, message=F, warning=F}
 homeless_tidy <- read.csv("../data/homeless_tidy.csv")
+# df <- read.socrata(
+#   "https://data.cityofnewyork.us/resource/ur7y-ziyb.json",
+#   app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
+#   email     = "hz2694@columbia.edu",
+#   password  = "9N6nrWC*y5#3zwG"
+# )
 ```
 
 ```{r map, message=F, warning=F}
 # worldMap <- getMap(resolution = "high")
 # country <- c("United States")
 # ind <- which(worldMap$NAME %in% country)
+homeless_tidy %>%
+  select(date, count, BoroCD) -> homeless
+
 
 nycd <- "../data/nycd_21d/nycd.shp"
 # nycdwi <- "../data/nycdwi_21d/nycdwi.shp"
 nycd_shp <- readOGR(dsn = nycd, stringsAsFactors = F)
+
+df <- merge(nycd_shp, homeless, by.x = "BoroCD", by.y = "BoroCD")
+
+#nycd_join <- merge(nycd_shp, homeless_tidy, by = "BoroCD")
 # nycdwi_shp <- readOGR(dsn = nycdwi, stringsAsFactors = F)
 nycd_map <- ggplot() +
   geom_polygon(data = nycd_shp, aes(x = long, y = lat, group = group), colour = "black", fill = NA)
