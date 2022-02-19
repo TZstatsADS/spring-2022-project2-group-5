@@ -105,6 +105,15 @@ server <- function(input, output) {
         e_hide_grid_lines() 
     })
     
+    output$plot3 <- renderEcharts4r({
+        homeless_df %>% 
+            filter(borough == input$neighborhood_select) %>% 
+            group_by(borough) %>% 
+            e_charts(date) %>% 
+            e_bar(count, stack = "borough") %>% 
+            e_hide_grid_lines()
+    })
+    
     ## Map Section ## 
     output$plot2 <- renderLeaflet({
         leaflet() %>% 
