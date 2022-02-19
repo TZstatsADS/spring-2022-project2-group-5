@@ -32,6 +32,14 @@ if (!require("bs4Dash")){
     install.packages("bs4Dash")
     library(bs4Dash)
 }
+if (!require("echarts4r")){
+    install.packages("echarts4r")
+    library(echarts4r)
+}
+if (!require("lubridate")){
+    install.packages("lubridate")
+    library(lubridate)
+}
 
 ## Add dependencies
 use_deps <- function(){
@@ -44,7 +52,7 @@ use_deps <- function(){
 
 #Data Processing
 print(getwd())
-covid_df <- read.csv('../data/covid_tidy.csv')
+covid_df <- read.csv('../data/covid_tidy.csv') 
 homeless_df <- read.csv('../data/homeless_tidy.csv')
 shelters_df <- read.csv('../data/shelters_tidy.csv')
 
@@ -83,13 +91,18 @@ server <- function(input, output) {
     
     
     
-    
+
     ## Statistics Tab section ##
-    set.seed(122)
-    histdata <- rnorm(500)
-    output$plot1 <- renderPlot({
-        data <- histdata[seq_len(input$slider)]
-        hist(data)
+    #covid_df <- covid_df %>% 
+        #mutate(date = ymd(covid_df$date)) %>% 
+        #mutate(date)
+    output$plot1 <- renderEcharts4r({
+        #data <- histdata[seq_len(input$slider)]
+        covid_df %>% 
+        e_charts(date) %>% 
+        e_line(case_count) %>% 
+        e_area(death_count) %>% 
+        e_hide_grid_lines() 
     })
     
     ## Map Section ## 
