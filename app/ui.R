@@ -63,7 +63,7 @@ ui <- function(){
               selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
                                                                              "Manhatten" = 2))
             ),
-            box(plotOutput("plot2", height = 250))
+            box(leafletOutput("plot2", height = 250))
             
           )
         )

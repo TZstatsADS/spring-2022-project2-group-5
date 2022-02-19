@@ -43,8 +43,10 @@ use_deps <- function(){
 }
 
 #Data Processing
+print(getwd())
 covid_df <- read.csv('../data/covid_tidy.csv')
 homeless_df <- read.csv('../data/homeless_tidy.csv')
+shelters_df <- read.csv('../data/shelters_tidy.csv')
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -91,11 +93,10 @@ server <- function(input, output) {
     })
     
     ## Map Section ## 
-    mapdata <- homeless_df
-    
-    output$plot2 <- renderPlot({
-        data <- mapdata[]
+    output$plot2 <- renderLeaflet({
+        leaflet() %>% 
+            #change map look: http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+            addProviderTiles(providers$CartoDB.Positron) %>% 
+            addMarkers(data = shelters_df)
     })
-    
-    
 }
