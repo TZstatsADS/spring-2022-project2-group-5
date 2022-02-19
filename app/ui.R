@@ -64,10 +64,20 @@ ui <- function(){
                 title = "Date Range",
                 width = 6,
                 dateRangeInput("dates", "Date range"),
-                selectInput("select", 
-                            "Select neighborhoods", 
-                            choices = list("Bronx" = 1, 
-                                            "Manhattan" = 2))
+                selectInput(inputId = "neighborhood_select", 
+                            label = "Select neighborhoods", 
+                            choices = list("Bronx",
+                                           "Brooklyn",
+                                           "Manhattan",
+                                           "Queens",
+                                           "Staten Island"),
+                            multiple = TRUE,
+                            selected = list("Bronx",
+                                       "Brooklyn",
+                                       "Manhattan",
+                                       "Queens",
+                                       "Staten Island")
+                            )
               ),
               box(
                 title = "Controls",
@@ -77,7 +87,13 @@ ui <- function(){
             box(
               title = "COVID Rates",
               width = 12,
-              echarts4rOutput("plot1", height = 250)),
+              echarts4rOutput("plot1", height = 250)
+            ),
+            box(
+              title = "Homelessness Rates",
+              width = 12,
+              echarts4rOutput("plot3", height = 250)
+            )
           )
         ),
         tabPanel(
