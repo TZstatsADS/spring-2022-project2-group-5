@@ -19,6 +19,18 @@ if (!require("leaflet.extras")) {
   install.packages("leaflet.extras")
   library(leaflet.extras)
 }
+if (!require("bs4Dash")){
+  install.packages("bs4Dash")
+  library(bs4Dash)
+}
+if (!require("echarts4r")){
+  install.packages("echarts4r")
+  library(echarts4r)
+}
+if (!require("lubridate")){
+  install.packages("lubridate")
+  library(lubridate)
+}
 
 # Define UI for application
 ui <- function(){
@@ -46,13 +58,26 @@ ui <- function(){
         ),
         tabPanel(
           title = "Statistics",
-          fluidRow(
-            box(plotOutput("plot1", height = 250)),
-            
+          fluidPage(
+            fluidRow(
+              box(
+                title = "Date Range",
+                width = 6,
+                dateRangeInput("dates", "Date range"),
+                selectInput("select", 
+                            "Select neighborhoods", 
+                            choices = list("Bronx" = 1, 
+                                            "Manhattan" = 2))
+              ),
+              box(
+                title = "Controls",
+                width = 6,
+                sliderInput("slider", "Number of observations", 1, 100, 50)
+              )),
             box(
-              title = "Controls",
-              sliderInput("slider", "Number of observations", 1, 100, 50)
-            )
+              title = "COVID Rates",
+              width = 12,
+              echarts4rOutput("plot1", height = 250)),
           )
         ),
         tabPanel(
@@ -61,7 +86,7 @@ ui <- function(){
             box(
               title = "Neighborhoods",
               selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
-                                                                             "Manhatten" = 2))
+                                                                             "Manhattan" = 2))
             ),
             box(leafletOutput("plot2", height = 250))
             
