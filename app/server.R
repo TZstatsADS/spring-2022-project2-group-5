@@ -85,9 +85,8 @@ server <- function(input, output) {
     ## Statistics Tab section ##
     set.seed(122)
     histdata <- rnorm(500)
-    
     output$plot1 <- renderPlot({
-        data <- histdata[seq_len(inputs$slider)]
+        data <- histdata[seq_len(input$slider)]
         hist(data)
     })
     
