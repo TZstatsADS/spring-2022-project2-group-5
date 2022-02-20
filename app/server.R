@@ -207,6 +207,17 @@ server <- function(input, output) {
     })
 
     
+    #hotel map
+    hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
+    Borx <- reactive({input$selecteBor})
+    
+    output$hotelMap <- renderLeaflet({
+      
+      hot = hot[hot$Borough == Borx(),]
+      leaflet(data=hot) %>% addTiles() %>%
+        addMarkers(~Longitude, ~Latitude, popup = ~as.character(OWNER_NAME))
+      
+    })
     
     
     
@@ -218,3 +229,5 @@ server <- function(input, output) {
     #})
 }
 
+#setwd("D:/OneDrive/Documents/5243/spring-2022-project2-group-5/app")
+#getwd()
