@@ -2,7 +2,7 @@
 
 ### [Project Description](doc/project2_desc.md)
 
-![screenshot](doc/figs/map.jpg)
+![screenshot](doc/figs/homeless_fig_10.gif)
 
 In this second project of GR5243 Applied Data Science, we develop a *Exploratory Data Analysis and Visualization* shiny app on the work of a **NYC government agency/program** of your choice using NYC open data released on the [NYC Open Data By Agency](https://opendata.cityofnewyork.us/data/) website. In particular, many agencies have adjusted their work or rolled out new programs due to COVID, your app should provide ways for a user to explore quantiative measures of how covid has impacted daily life in NYC from different prospectives. See [Project 2 Description](doc/project2_desc.md) for more details.  
 
@@ -16,11 +16,12 @@ The **learning goals** for this project is:
 
 *The above general statement about project 2 can be removed once you are finished with your project. It is optional.
 
-## Project Title Lorem ipsum dolor sit amet
+## Project Title Where you can help during COVID-19
+# Homelessness during the pandemic
 Term: Spring 2022
 
 + Team #5
-+ **Project title**: + 
++ **Where you can help during COVID-19**: + 
 	+ Kurihara, Sarah sqk2003@columbia.edu
 	+ Shao, Jiahao js5954@columbia.edu
 	+ Wang, Huiying hw2816@columbia.edu
