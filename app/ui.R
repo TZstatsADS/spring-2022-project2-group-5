@@ -110,6 +110,18 @@ ui <- function(){
             box(title = "shelter for the homeless"),
             box(leafletOutput("locationMap"))
           )
+        ),
+        tabPanel(
+          title = "Area Map",
+          sliderInput(
+            "Year", "year", min = 2020, max = 2021, value = 2021,
+            step = 1
+          ),
+          sliderInput(
+            "Month", "month", min = 1, max = 12, value = 3,
+            step = 1
+          ),
+          leafletOutput("homelessArea")
         )
       )
     )

@@ -40,6 +40,28 @@ if (!require("lubridate")){
     install.packages("lubridate")
     library(lubridate)
 }
+if (!require("geojsonio")){
+  install.packages("geojsonio")
+  library(geojsonio)
+}
+if (!require("RColorBrewer")){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
+if (!require("rgdal")){
+  install.packages("rgdal")
+  library(rgdal)
+}
+if (!require("jsonlite")){
+  install.packages("jsonlite")
+  library(jsonlite)
+}
+
+
+
+
+
+
 
 ## Add dependencies
 use_deps <- function(){
@@ -129,6 +151,64 @@ server <- function(input, output) {
     })
     
     
+    # area map #
+    # set up map
+    geojson <- readLines("../doc/nyccomadd.json", warn = FALSE) %>%
+      paste(collapse = "\n") %>%
+      fromJSON(simplifyVector = FALSE)
+    
+    # Default styles for all features
+    geojson$style = list(
+      weight = 1,
+      color = "red",
+      opacity = 1,
+      fillOpacity = 0.8
+    )
+    
+    #set up dataset
+    hom <- homeless_df
+    hom$Month <- month(ymd(hom$date))
+    hom$Year <- year(ymd(hom$date))
+    
+    #Reactive
+    yearx<- reactive({input$Year})
+    monthx <- reactive({input$Month})
+
+    
+    # Final output
+    output$homelessArea <- renderLeaflet({
+      
+      homNewMonth<-hom[hom$Year == yearx() & hom$Month == monthx(), ]
+      homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
+      homNewMonth$count <- as.integer(homNewMonth$count)
+      
+      # Color by per-capita GDP using quantiles
+      pal=colorNumeric("YlOrRd", homNewMonth$count)
+      # Add a properties$style list to each feature
+      geojson$features <- lapply(geojson$features, function(feat) {
+        feat$properties$style <- list(
+          fillColor = pal(
+            # data$count with this CD
+            homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
+            #feat$properties$gdp_md_est / max(1, feat$properties$pop_est)
+          )
+        )
+        feat
+      })
+      
+      leaflet() %>% 
+        setView(lng = -74, lat = 40.71, zoom = 11) %>%
+        addTiles() %>%
+        addGeoJSON(geojson) %>%
+        #addPolygons(popup = ~1) %>%
+        addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
+                  title = "number of the homeless")      
+      
+    })
+
+    
+    
+    
     
     #output$plot2 <- renderLeaflet({
     #    leaflet() %>% 
@@ -137,5 +217,4 @@ server <- function(input, output) {
     #        addMarkers(data = shelters_df)
     #})
 }
-
 
