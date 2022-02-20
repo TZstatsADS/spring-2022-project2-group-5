@@ -16,11 +16,12 @@ The **learning goals** for this project is:
 
 *The above general statement about project 2 can be removed once you are finished with your project. It is optional.
 
-## Project Title Lorem ipsum dolor sit amet
+# Project Title： Where you can help during COVID-19
+## Homelessness during the pandemic
 Term: Spring 2022
 
 + Team #5
-+ **Project title**: + 
++ **Team members**: + 
 	+ Kurihara, Sarah sqk2003@columbia.edu
 	+ Shao, Jiahao js5954@columbia.edu
 	+ Wang, Huiying hw2816@columbia.edu
