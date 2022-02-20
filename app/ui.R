@@ -104,25 +104,50 @@ ui <- function(){
               selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
                                                                              "Manhattan" = 2))
             ),
-            box(leafletOutput("plot2", height = 250)),
+            box(leafletOutput("plot2", height = 250))
             
-            # new box for shelters locations
-            box(title = "shelter for the homeless"),
-            box(leafletOutput("locationMap"))
+    
+            
           )
         ),
         tabPanel(
-          title = "Area Map",
-          sliderInput(
-            "Year", "year", min = 2020, max = 2021, value = 2021,
-            step = 1
-          ),
-          sliderInput(
-            "Month", "month", min = 1, max = 12, value = 3,
-            step = 1
-          ),
-          leafletOutput("homelessArea")
+          title = "The Homeless Map",
+          fluidRow(
+            # box for shelters locations
+            box(title = "shelter for the homeless"),
+            box(leafletOutput("locationMap")), 
+            
+            # box for homeless area
+            box("select a time", 
+              sliderInput(
+                "Year", "year", min = 2020, max = 2021, value = 2021,
+                step = 1
+              ),
+              sliderInput(
+                "Month", "month", min = 1, max = 12, value = 3,
+                step = 1
+              )
+            ),
+            box(
+              leafletOutput("homelessArea")
+            )
+          )
         )
+        ,
+        tabPanel(
+          title = "Hotel map",
+          fluidRow(
+            box(
+             title = "Borough",
+              selectInput("selecteBor", "Select Borough", choices = c("Bronx" = "BRONX", 
+                  "Queens" = "QUEENS", "Manhattan" = "MANHATTAN", "Brooklyn" = "BROOKLYN", 
+                  "Staten Island" = "STATEN IS"), selected = "Queens"
+              )
+            ),
+            box(leafletOutput("hotelMap"))
+          )
+        )
+        
       )
     )
   )
