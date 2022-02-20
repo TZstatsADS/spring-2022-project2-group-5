@@ -118,7 +118,7 @@ server <- function(input, output) {
     
     # shelters locations map
     shelterIcon <- makeIcon(
-      iconUrl = "../lib/house.png",
+      iconUrl = "../doc/figs/house.png",
       iconWidth = 38, iconHeight = 38
     )
     output$locationMap <- renderLeaflet({
