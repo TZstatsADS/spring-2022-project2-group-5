@@ -5,51 +5,88 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 
 library(tidyverse)
 library(dplyr)
 library(rworldmap)
 library(rgdal)
 library(ggplot2)
-library(RSocrata)
 library(ggspatial)
+library(viridis)
+library(magick)
 ```
 
-```{r read_data, message=F, warning=F}
+```{r read_data}
+# homeless data
 homeless_tidy <- read.csv("../data/homeless_tidy.csv")
-# df <- read.socrata(
-#   "https://data.cityofnewyork.us/resource/ur7y-ziyb.json",
-#   app_token = "IKAeRZx0jHfj8qD1SvDGxHGsx",
-#   email     = "hz2694@columbia.edu",
-#   password  = "9N6nrWC*y5#3zwG"
-# )
+# map shape file
+nycd <- "../data/nycd_21d/nycd.shp"
+nycd_shp <- readOGR(dsn = nycd, stringsAsFactors = F)
 ```
 
-```{r map, message=F, warning=F}
-# worldMap <- getMap(resolution = "high")
-# country <- c("United States")
-# ind <- which(worldMap$NAME %in% country)
+```{r map}
+theme_map <- function(...) {
+  theme_minimal() +
+  theme(
+    text = element_text(color = "#22211d"),
+    axis.line = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    # panel.grid.minor = element_line(color = "#ebebe5", size = 0.2),
+    panel.grid.major = element_line(color = "#ebebe5", size = 0.2),
+    panel.grid.minor = element_blank(),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA), 
+    panel.background = element_rect(fill = "#f5f5f2", color = NA), 
+    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.border = element_blank(),
+    ...
+  )
+}
+## Fill the map first
+# nycdwi_shp <- readOGR(dsn = nycdwi, stringsAsFactors = F)
+
+covid_date <- factor(homeless_tidy$date)
+
+for (i in 1:length(levels(covid_date))) {
 homeless_tidy %>%
   select(date, count, BoroCD) %>%
-  filter(date == as.Date("2020-03-31"))-> homeless
+  filter(date == as.Date(levels(covid_date)[i])) %>%
+  merge(x = nycd_shp, by.x = "BoroCD", by.y = "BoroCD") -> df  # join data set
 
+print(
+ggplot() +
+  geom_polygon(data = df, aes(x = long, y = lat, group = group)) +
+  annotation_spatial(data = df) +
+  layer_spatial(data = df, aes(fill = count)) +
+  theme_map() +
+  # and we use guide_legend instead of guide_colourbar
+    scale_fill_viridis(
+    option = "magma",
+    name = "homeless people",
+    discrete = F,
+    direction = -1,
+    limits = c(0, 2500),
+    na.value="white",
+    guide = guide_legend(
+     keyheight = unit(5, units = "mm"),
+     title.position = 'top',
+     reverse = T)) +
+  labs(title = paste0("Homeless people in New York City " , as.character(levels(covid_date)[i])))
+)
 
-nycd <- "../data/nycd_21d/nycd.shp"
-# nycdwi <- "../data/nycdwi_21d/nycdwi.shp"
-nycd_shp <- readOGR(dsn = nycd, stringsAsFactors = F)
+# save files
+ggsave(filename = paste0(stringr::str_pad(i, 3, pad = "0"), ".png"), path = "figs/")
+}
+```
 
-df <- merge(nycd_shp, homeless, by.x = "BoroCD", by.y = "BoroCD") # join data set
-# nycdwi_shp <- readOGR(dsn = nycdwi, stringsAsFactors = F)
-nycd_map <- ggplot() +
-  geom_polygon(data = df, aes(x = long, y = lat, group = group, colour = "black"))
-# nycdwi_map <- ggplot() +
-#   geom_polygon(data = nycdwi_shp, aes(x = long, y = lat, group = group), colour = "black", fill = NA)
-
-nycd_map <- ggplot() +
-   annotation_spatial(df) +
-  layer_spatial(df, aes(fill = count))
-
-nycd_map
-# nycdwi_map + theme_void()
+```{r gif}
+imgs <- list.files("figs/", full.names = TRUE)
+lapply(imgs, image_read) %>%
+  image_join() %>%
+  image_animate(fps = 10) %>%
+  image_write("homeless_fig_10.gif")
 ```
