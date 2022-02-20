@@ -1,0 +1,92 @@
+---
+title: "map"
+author: "Tony"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+
+library(tidyverse)
+library(dplyr)
+library(rworldmap)
+library(rgdal)
+library(ggplot2)
+library(ggspatial)
+library(viridis)
+library(magick)
+```
+
+```{r read_data}
+# homeless data
+homeless_tidy <- read.csv("../data/homeless_tidy.csv")
+# map shape file
+nycd <- "../data/nycd_21d/nycd.shp"
+nycd_shp <- readOGR(dsn = nycd, stringsAsFactors = F)
+```
+
+```{r map}
+theme_map <- function(...) {
+  theme_minimal() +
+  theme(
+    text = element_text(color = "#22211d"),
+    axis.line = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    # panel.grid.minor = element_line(color = "#ebebe5", size = 0.2),
+    panel.grid.major = element_line(color = "#ebebe5", size = 0.2),
+    panel.grid.minor = element_blank(),
+    plot.background = element_rect(fill = "#f5f5f2", color = NA), 
+    panel.background = element_rect(fill = "#f5f5f2", color = NA), 
+    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    panel.border = element_blank(),
+    ...
+  )
+}
+## Fill the map first
+# nycdwi_shp <- readOGR(dsn = nycdwi, stringsAsFactors = F)
+
+covid_date <- factor(homeless_tidy$date)
+
+for (i in 1:length(levels(covid_date))) {
+homeless_tidy %>%
+  select(date, count, BoroCD) %>%
+  filter(date == as.Date(levels(covid_date)[i])) %>%
+  merge(x = nycd_shp, by.x = "BoroCD", by.y = "BoroCD") -> df  # join data set
+
+print(
+ggplot() +
+  geom_polygon(data = df, aes(x = long, y = lat, group = group)) +
+  annotation_spatial(data = df) +
+  layer_spatial(data = df, aes(fill = count)) +
+  theme_map() +
+  # and we use guide_legend instead of guide_colourbar
+    scale_fill_viridis(
+    option = "magma",
+    name = "homeless people",
+    discrete = F,
+    direction = -1,
+    limits = c(0, 2500),
+    na.value="white",
+    guide = guide_legend(
+     keyheight = unit(5, units = "mm"),
+     title.position = 'top',
+     reverse = T)) +
+  labs(title = paste0("Homeless people in New York City " , as.character(levels(covid_date)[i])))
+)
+
+# save files
+ggsave(filename = paste0(stringr::str_pad(i, 3, pad = "0"), ".png"), path = "figs/")
+}
+```
+
+```{r gif}
+imgs <- list.files("figs/", full.names = TRUE)
+lapply(imgs, image_read) %>%
+  image_join() %>%
+  image_animate(fps = 10) %>%
+  image_write("homeless_fig_10.gif")
+```
