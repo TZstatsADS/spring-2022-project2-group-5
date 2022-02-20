@@ -104,11 +104,15 @@ ui <- function(){
               selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
                                                                              "Manhattan" = 2))
             ),
-            box(leafletOutput("plot2", height = 250))
+            box(leafletOutput("plot2", height = 250)),
             
+            # new box for shelters locations
+            box(title = "shelter for the homeless"),
+            box(leafletOutput("locationMap"))
           )
         )
       )
     )
   )
 }
+

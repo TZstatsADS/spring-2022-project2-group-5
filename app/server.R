@@ -115,10 +115,27 @@ server <- function(input, output) {
     })
     
     ## Map Section ## 
-    output$plot2 <- renderLeaflet({
-        leaflet() %>% 
-            #change map look: http://leaflet-extras.github.io/leaflet-providers/preview/index.html
-            addProviderTiles(providers$CartoDB.Positron) %>% 
-            addMarkers(data = shelters_df)
+    
+    # shelters locations map
+    shelterIcon <- makeIcon(
+      iconUrl = "../lib/house.png",
+      iconWidth = 38, iconHeight = 38
+    )
+    output$locationMap <- renderLeaflet({
+      leaflet(data=shelters_df) %>% addTiles() %>%
+        addMarkers(~longitude, ~latitude, popup = ~as.character(Comments),
+                   label = ~as.character(name), icon = shelterIcon)
+      
     })
+    
+    
+    
+    #output$plot2 <- renderLeaflet({
+    #    leaflet() %>% 
+    #        #change map look: http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+    #        addProviderTiles(providers$CartoDB.Positron) %>% 
+    #        addMarkers(data = shelters_df)
+    #})
 }
+
+
