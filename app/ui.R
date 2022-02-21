@@ -205,10 +205,10 @@ ui <- function(){
             box(
               title = "Shelters",
               leafletOutput("locationMap", height = 350),
-              width = 12),
+              width = 10),
             box(
               title = "Hotels",
-              width = 12,
+              width = 10,
               leafletOutput("hotelMap", height = 350))
           )
         )

@@ -157,7 +157,8 @@ server <- function(input, output) {
       iconWidth = 38, iconHeight = 38
     )
     output$locationMap <- renderLeaflet({
-      leaflet(data=shelters_df) %>% addTiles() %>%
+      leaflet(data=shelters_df) %>% 
+        addProviderTiles(providers$CartoDB.Positron) %>%
         addMarkers(~longitude, ~latitude, popup = ~as.character(Comments),
                    label = ~as.character(name), icon = shelterIcon)
       
@@ -242,7 +243,8 @@ server <- function(input, output) {
     output$hotelMap <- renderLeaflet({
       
       hot = hot[hot$Borough == Borx(),]
-      leaflet(data=hot) %>% addTiles() %>%
+      leaflet(data=hot) %>% 
+        addProviderTiles(providers$CartoDB.Positron) %>% 
         addMarkers(~Longitude, ~Latitude, popup = ~as.character(OWNER_NAME))
       
     })
