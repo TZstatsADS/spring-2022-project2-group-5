@@ -53,6 +53,10 @@ server <- function(input, output) {
     # w$show()
     # hostess$start()
 
+  
+  output$icu <- renderText({
+    HTML("<b>Welcome to the NYC Homelessness Dashboard</b>")
+  })
     ## Homepage section ##
     
     
