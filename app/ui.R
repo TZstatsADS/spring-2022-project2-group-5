@@ -176,7 +176,7 @@ ui <- function(){
           fluidRow(
             box(
               title = "Filters",
-              width = 3,
+              width = 12,
               selectInput("selecteBor", 
                           "Select Borough", 
                           choices = c("Bronx" = "BRONX", 
@@ -197,18 +197,24 @@ ui <- function(){
                           selected = "Food"
                           )),
             box(
-              width = 9,
+              width = 6,
               title = "Resources",
               collapsible = TRUE,
               dataTableOutput("resourceTable")
               ),
             box(
+              width = 6,
+              title = "How to Apply",
+              collapsible = FALSE,
+              dataTableOutput("apply")
+            ),
+            box(
               title = "Shelters",
               leafletOutput("locationMap", height = 350),
-              width = 10),
+              width = 6),
             box(
               title = "Hotels",
-              width = 10,
+              width = 6,
               leafletOutput("hotelMap", height = 350))
           )
         )
