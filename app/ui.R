@@ -109,46 +109,6 @@ ui <- function(){
         tabPanel(
           title = "Statistics",
           fluidPage(
-            fluidRow(
-              box(
-                title = "Date Range",
-                width = 6,
-                dateRangeInput("dates", "Date range"),
-                selectInput(inputId = "neighborhood_select", 
-                            label = "Select neighborhoods", 
-                            choices = list("Bronx",
-                                           "Brooklyn",
-                                           "Manhattan",
-                                           "Queens",
-                                           "Staten Island"),
-                            multiple = TRUE,
-                            selected = list("Bronx",
-                                       "Brooklyn",
-                                       "Manhattan",
-                                       "Queens",
-                                       "Staten Island")
-                            )
-              ),
-              box(
-                title = "Controls",
-                width = 6,
-                sliderInput("slider", "Number of observations", 1, 100, 50)
-              )),
-            box(
-              title = "COVID Rates",
-              width = 12,
-              echarts4rOutput("plot1", height = 250)
-            ),
-            box(
-              title = "Homelessness Rates",
-              width = 12,
-              echarts4rOutput("plot3", height = 250)
-            )
-          )
-        ),
-        tabPanel(
-          title = "Statistics",
-          fluidPage(
             box(
               title = "Number of homeless individuals and confirmed COVID-19 cases", 
               width = 12,
@@ -192,54 +152,55 @@ ui <- function(){
           )
         ),
         tabPanel(
-          title = "Map",
+          title = "Affected Areas",
           fluidRow(
-            box(
-              title = "Neighborhoods",
-              selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
-                                                                             "Manhattan" = 2))
-            ),
-            box(leafletOutput("plot2", height = 250))
-            
-    
-            
-          )
-        ),
-        tabPanel(
-          title = "The Homeless Map",
-          fluidRow(
-            # box for shelters locations
-            box(title = "shelter for the homeless"),
-            box(leafletOutput("locationMap")), 
-            
             # box for homeless area
-            box("select a time", 
-              sliderInput(
-                "Year", "year", min = 2020, max = 2021, value = 2021,
-                step = 1
+            box(title = "Select month (03/2020 - 12/2021)",
+                width = 3,
+                dateInput("date", 
+                        "Select date:",
+                        max = "2021-12-31",
+                        min = "2020-03-01",
+                        value = "2021-12-31"
+                        )
               ),
-              sliderInput(
-                "Month", "month", min = 1, max = 12, value = 3,
-                step = 1
-              )
-            ),
-            box(
-              leafletOutput("homelessArea")
+            box(title = "Number of Homeless",
+                width = 9,
+                leafletOutput("homelessArea")
             )
           )
         )
         ,
         tabPanel(
-          title = "Hotel map",
+          title = "Resources",
           fluidRow(
             box(
-             title = "Borough",
-              selectInput("selecteBor", "Select Borough", choices = c("Bronx" = "BRONX", 
-                  "Queens" = "QUEENS", "Manhattan" = "MANHATTAN", "Brooklyn" = "BROOKLYN", 
-                  "Staten Island" = "STATEN IS"), selected = "Queens"
-              )
+              title = "Filters",
+              width = 3,
+              selectInput("selecteBor", 
+                          "Select Borough", 
+                          choices = c("Bronx" = "BRONX", 
+                                      "Queens" = "QUEENS", 
+                                      "Manhattan" = "MANHATTAN", 
+                                      "Brooklyn" = "BROOKLYN", 
+                                      "Staten Island" = "STATEN IS"), 
+                          selected = "Queens"
+              ),
+              selectInput("selectPrice",
+                          "Price",
+                          choices = c("option 1",
+                                      "option 2")),
+              selectInput("selectCategory",
+                          "Category",
+                          choices = c("option 1",
+                                      "otpion 2"))
             ),
-            box(leafletOutput("hotelMap"))
+            box(title = "Shelters",
+                leafletOutput("locationMap", height = 350),
+                width = 9),
+            box(title = "Hotels",
+                width = 12,
+                leafletOutput("hotelMap", height = 350))
           )
         )
         

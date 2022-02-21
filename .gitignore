@@ -4,3 +4,5 @@
 .Ruserdata
 .doc.Rproj
 spring-2022-project2-group-5.Rproj
+.DS_Store
+*/.DS_Store

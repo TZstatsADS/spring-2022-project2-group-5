@@ -184,16 +184,20 @@ server <- function(input, output) {
     hom$Year <- year(ymd(hom$date))
     
     #Reactive
-    yearx<- reactive({input$Year})
-    monthx <- reactive({input$Month})
-
+    #yearx<- reactive({input$Year})
+    #monthx <- reactive({input$Month})
+    #datex <- input$date
     
     # Final output
     output$homelessArea <- renderLeaflet({
       
-      homNewMonth<-hom[hom$Year == yearx() & hom$Month == monthx(), ]
-      homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
-      homNewMonth$count <- as.integer(homNewMonth$count)
+      homNewMonth <- hom %>% 
+        filter(date == ceiling_date(ymd(input$date), 'month') - 1) %>% 
+        arrange(BoroCD) %>%
+        mutate(count = as.integer(count))
+      
+      #homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
+      #homNewMonth$count <- as.integer(homNewMonth$count)
       
       # Color by per-capita GDP using quantiles
       pal=colorNumeric("YlOrRd", homNewMonth$count)
@@ -210,8 +214,8 @@ server <- function(input, output) {
       })
       
       leaflet() %>% 
-        setView(lng = -74, lat = 40.71, zoom = 11) %>%
-        addTiles() %>%
+        setView(lng = -74, lat = 40.71, zoom = 10) %>%
+        addProviderTiles(providers$CartoDB.Positron) %>%
         addGeoJSON(geojson) %>%
         #addPolygons(popup = ~1) %>%
         addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
