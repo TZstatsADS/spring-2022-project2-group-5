@@ -75,14 +75,13 @@ ui <- function(){
           title = "Affected Areas",
           fluidRow(
             # box for homeless area
-            box(title = "Select month",
+            box(title = "Select month (03/2020 - 12/2021)",
                 width = 3,
                 dateInput("date", 
-                        "Month and Year", 
-                        #min = 2020, 
-                        #max = 2021, 
-                        #value = 2021,
-                        #step = 1
+                        "Select date:",
+                        max = "2021-12-31",
+                        min = "2020-03-01",
+                        value = "2021-12-31"
                         )
               ),
             box(title = "Number of Homeless",
