@@ -20,6 +20,8 @@ data_borough <-readRDS(file = "../data/data_for_statistics/data_borough.rds")
 data_nyc <-readRDS(file = "../data/data_for_statistics/data_nyc.rds")
 most_recent_ind <-readRDS(file = "../data/data_for_statistics/most_recent_ind.rds")
 borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
+homeless_by_type<-readRDS(file = "../data/data_for_statistics/homeless_by_type.rds")
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -81,18 +83,12 @@ server <- function(input, output) {
     })
     
     ## Statistics Tab section 2##
-    output$histogram_plot <- renderPlotly({
-      p <- ggplotly(
-        ggplot(most_recent_ind,
-               aes(y=individuals_sum, x = `Report Date`,fill= Borough)) +
-          geom_bar(position="dodge", stat="identity") 
-        #+theme_minimal()
-      )
-    })
+    
     output$pie_chart<-renderEcharts4r({
       echarts4r::e_charts(most_recent_ind,Borough)|>
         e_pie(individuals_sum,radius=c("50%","70%"))|>
-        e_legend(type="scroll",selector=c("all","inverse"),selectorPosition="start",orient="vertical",right=-10)|>
+       # e_grid(top="40%")|>
+        e_legend(type="plain",selector=c("all","inverse"),selectorPosition="end",orient="horizontal",top=-8)|>
         e_color(background="White")|>
         e_tooltip(trigger="item")
       
@@ -110,15 +106,69 @@ server <- function(input, output) {
       
     })
     
-    output$reg<-renderPlotly({
-      ggplotly(
-        data_borough%>%filter(Borough %in% input$region2)%>%
-          ggplot(
-            aes(x = `Report Date`, y = individuals_sum,color= Borough)) +
-          geom_line()
-      )
+    
+    output$region<-renderEcharts4r({
+      echarts4r::e_charts(data_borough%>%group_by(Borough),`Report Date`)|>
+        e_line(individuals_sum,
+               smooth=FALSE,
+               symbol = "none")|>
+   #     e_y_axis(formatter = "{value}")|>
+        e_x_axis(name = "Date",
+                 nameLocation = "middle",
+                 nameTextStyle = list(padding = 40),
+                 axisLabel = list(interval = 0),
+                 axisPointer = list(
+                   show = TRUE,
+                   lineStyle = list(
+                     color = "#cf53c2",
+                     type = "dashed",
+                     width = 1.5
+                   )
+                 )
+        ) |>
+        e_datazoom(type = "slider")|>
+        e_tooltip(trigger = "item")|>
+        e_color(background = "White") |>
+        e_hide_grid_lines()
     })
     
+    output$type_histogram<- renderEcharts4r({
+      homeless_by_type%>%
+        arrange(date)%>%
+        filter(date>ymd("2020-01-01"))%>% #after the pandemic
+        mutate(floor_date = floor_date(ymd(date),"6 months"))%>% #floor the date(half year)
+        filter(type %in% c("Single Adult Men in Shelter",
+                           "Single Adult Women in Shelter",
+                           "Adult Families in Shelter",
+                           "Families with Children in Shelter"))%>% #choose types
+        group_by(type,floor_date)%>%
+        summarise(avg=mean(number)%>%round())%>% #get the year average for each type
+        ungroup()%>%
+        group_by(floor_date)%>%
+        echarts4r::e_chart(type,
+                           timeline = T)|>
+        e_bar(avg,
+              realtimeSort=T,
+              seriesLayoutBy="column",
+              label=list(show=T,position="insideRight"))|>
+        e_flip_coords()|>
+        e_grid(left="22%")|>
+        e_x_axis(min=0,max=14000)|>
+        e_legend(show=F)|>
+        e_title(left="center",top=10)|>
+        e_timeline_opts(autoPlay=T,show=F)|>
+        e_timeline_serie(title=list(list(text="2020 1st half",
+                                         textStyle=list(fontWeight="bold",fontSize=20)),
+                                    list(text="2020 2nd half"),
+                                    list(text="2021 1st half"),
+                                    list(text="2021 2nd half"),
+                                    list(text="2022 by now")))|>
+        e_tooltip(trigger = "item")|>
+        e_color(background = "White")
+      
+      
+    })
+
     ## Map Section ## 
     
     # shelters locations map

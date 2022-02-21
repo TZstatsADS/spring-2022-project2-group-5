@@ -72,6 +72,7 @@ ui <- function(){
             box(
               title = "Daily reported Homeless individuals vs count of NYC residents who tested positive for SARS-CoV-2", 
               width = 12,
+<<<<<<< Updated upstream
               echarts4rOutput("covid_case_count", height = 300))
             ,fluidRow(
               box(
@@ -104,6 +105,27 @@ ui <- function(){
               #   width = 6,
               #   plotlyOutput("histogram_plot", height = 250))
             )
+=======
+              echarts4rOutput("covid_case_count", 
+                              height = 350)
+              ),
+            box(
+              title = "Average Homlessness in NYC shelters by Type since COVID-19",
+              width = 12,
+              echarts4rOutput("type_histogram", height = 300)),
+          ),
+            fluidRow(
+              box(
+                title = "Proportion of homelessness by bourough",
+                width = 5,
+                echarts4rOutput("pie_chart", height = 340)
+                ),
+              box(
+                title = "Homeless individuals by borough over time",
+                width = 7,
+                echarts4rOutput("region", height = 360)
+              )
+>>>>>>> Stashed changes
           )
         ),
         tabPanel(

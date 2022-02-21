@@ -8,8 +8,14 @@ data<-read_csv('../data/data_for_statistics/Associated_Address_by_Borough_and_Co
 ## merge covid case tibble and homeless_by_type tibble, prepare for visualization
 covid<-read_csv('../data/data_for_statistics/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv')
 covid<-covid%>%mutate(date=mdy(DATE_OF_INTEREST))
+
 homeless_by_type<-read_csv("../data/data_for_statistics/DHS_Daily_Report.csv")
-homeless_by_type<-homeless_by_type%>%mutate(date=mdy(`Date of Census`))
+homeless_by_type<-homeless_by_type%>%
+  mutate(date=mdy(`Date of Census`))%>%
+  pivot_longer(cols=2:13,names_to = "type",values_to="number")%>%
+  select(-`Date of Census`)
+saveRDS(homeless_by_type, file = "../data/data_for_statistics/homeless_by_type.rds")
+
 # colnames(homeless_type)
 #only select time after 01/31/2018
 m<-right_join(covid,homeless_by_type,by="date")%>%
