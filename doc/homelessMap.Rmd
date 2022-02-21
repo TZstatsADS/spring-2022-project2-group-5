@@ -39,9 +39,9 @@ theme_map <- function(...) {
     # panel.grid.minor = element_line(color = "#ebebe5", size = 0.2),
     panel.grid.major = element_line(color = "#ebebe5", size = 0.2),
     panel.grid.minor = element_blank(),
-    plot.background = element_rect(fill = "#f5f5f2", color = NA), 
-    panel.background = element_rect(fill = "#f5f5f2", color = NA), 
-    legend.background = element_rect(fill = "#f5f5f2", color = NA),
+    plot.background = element_rect(fill = "white", color = NA), 
+    panel.background = element_rect(fill = "white", color = NA), 
+    legend.background = element_rect(fill = "white", color = NA),
     panel.border = element_blank(),
     ...
   )
@@ -87,6 +87,6 @@ ggsave(filename = paste0(stringr::str_pad(i, 3, pad = "0"), ".png"), path = "fig
 imgs <- list.files("figs/", full.names = TRUE)
 lapply(imgs, image_read) %>%
   image_join() %>%
-  image_animate(fps = 10) %>%
-  image_write("homeless_fig_10.gif")
+  image_animate(fps = 5) %>%
+  image_write("homeless.gif")
 ```
