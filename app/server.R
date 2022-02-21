@@ -1,70 +1,5 @@
-# Install related packages 
-
-if (!require("shiny")) {
-    install.packages("shiny")
-    library(shiny)
-}
-if (!require("leaflet")) {
-    install.packages("leaflet")
-    library(leaflet)
-}
-if (!require("leaflet.extras")) {
-    install.packages("leaflet.extras")
-    library(leaflet.extras)
-}
-if (!require("dplyr")) {
-    install.packages("dplyr")
-    library(dplyr)
-}
-if (!require("magrittr")) {
-    install.packages("magrittr")
-    library(magrittr)
-}
-if (!require("mapview")) {
-    install.packages("mapview")
-    library(mapview)
-}
-if (!require("leafsync")) {
-    install.packages("leafsync")
-    library(leafsync)
-}
-if (!require("bs4Dash")){
-    install.packages("bs4Dash")
-    library(bs4Dash)
-}
-if (!require("echarts4r")){
-    install.packages("echarts4r")
-    library(echarts4r)
-}
-if (!require("lubridate")){
-    install.packages("lubridate")
-    library(lubridate)
-}
-if (!require("geojsonio")){
-  install.packages("geojsonio")
-  library(geojsonio)
-}
-if (!require("RColorBrewer")){
-  install.packages("RColorBrewer")
-  library(RColorBrewer)
-}
-if (!require("rgdal")){
-  install.packages("rgdal")
-  library(rgdal)
-}
-if (!require("jsonlite")){
-  install.packages("jsonlite")
-  library(jsonlite)
-}
-if (!require("rsconnect")){
-  install.packages("rsconnect")
-  library(rsconnect)
-}
-
-
-
-
-
+# Install and load related packages 
+source("../doc/helpers_server.R")
 
 ## Add dependencies
 use_deps <- function(){
@@ -80,6 +15,11 @@ print(getwd())
 covid_df <- read.csv('../data/covid_tidy.csv') 
 homeless_df <- read.csv('../data/homeless_tidy.csv')
 shelters_df <- read.csv('../data/shelters_tidy.csv')
+m <-readRDS(file = "../data/data_for_statistics/m.rds")
+data_borough <-readRDS(file = "../data/data_for_statistics/data_borough.rds")
+data_nyc <-readRDS(file = "../data/data_for_statistics/data_nyc.rds")
+most_recent_ind <-readRDS(file = "../data/data_for_statistics/most_recent_ind.rds")
+borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -118,6 +58,7 @@ server <- function(input, output) {
     
 
     ## Statistics Tab section ##
+    ## Statistics Tab section 1##
     #covid_df <- covid_df %>% 
         #mutate(date = ymd(covid_df$date)) %>% 
         #mutate(date)
@@ -137,6 +78,45 @@ server <- function(input, output) {
             e_charts(date) %>% 
             e_bar(count, stack = "borough") %>% 
             e_hide_grid_lines()
+    })
+    
+    ## Statistics Tab section 2##
+    output$histogram_plot <- renderPlotly({
+      p <- ggplotly(
+        ggplot(most_recent_ind,
+               aes(y=individuals_sum, x = `Report Date`,fill= Borough)) +
+          geom_bar(position="dodge", stat="identity") 
+        #+theme_minimal()
+      )
+    })
+    output$pie_chart<-renderEcharts4r({
+      echarts4r::e_charts(most_recent_ind,Borough)|>
+        e_pie(individuals_sum,radius=c("50%","70%"))|>
+        e_legend(type="scroll",selector=c("all","inverse"),selectorPosition="start",orient="vertical",right=-10)|>
+        e_color(background="White")|>
+        e_tooltip(trigger="item")
+      
+    })
+    
+    output$covid_case_count<-renderEcharts4r({
+      echarts4r::e_charts(m,date)|>
+        e_line(`Total Individuals in Shelter`,y_index=0,smooth=T)|>
+        e_line(CASE_COUNT,y_index=1,smooth=T)|>
+        e_y_axis(y_index=0,min=42500,max=62500,name="# of reported individuals in shelter",formatter = "{value}")|>
+        e_y_axis(index=1,name="# of confirmed covid-19 patients/day",formatter = "{value}") |># here is "index"
+        e_datazoom(type="slider")|>
+        e_tooltip(trigger="item")|>
+        e_color(background="White")
+      
+    })
+    
+    output$reg<-renderPlotly({
+      ggplotly(
+        data_borough%>%filter(Borough %in% input$region2)%>%
+          ggplot(
+            aes(x = `Report Date`, y = individuals_sum,color= Borough)) +
+          geom_line()
+      )
     })
     
     ## Map Section ## 

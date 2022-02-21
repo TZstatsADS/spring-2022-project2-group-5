@@ -1,40 +1,6 @@
-
-if (!require("shiny")) {
-  install.packages("shiny")
-  library(shiny)
-}
-if (!require("shinyWidgets")) {
-  install.packages("shinyWidgets")
-  library(shinyWidgets)
-}
-if (!require("shinythemes")) {
-  install.packages("shinythemes")
-  library(shinythemes)
-}
-if (!require("leaflet")) {
-  install.packages("leaflet")
-  library(leaflet)
-}
-if (!require("leaflet.extras")) {
-  install.packages("leaflet.extras")
-  library(leaflet.extras)
-}
-if (!require("bs4Dash")){
-  install.packages("bs4Dash")
-  library(bs4Dash)
-}
-if (!require("echarts4r")){
-  install.packages("echarts4r")
-  library(echarts4r)
-}
-if (!require("lubridate")){
-  install.packages("lubridate")
-  library(lubridate)
-}
-if (!require("rsconnect")){
-  install.packages("rsconnect")
-  library(rsconnect)
-}
+# Install and load related packages 
+source("../doc/helpers_ui.R")
+borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
 
 # Define UI for application
 ui <- function(){
@@ -97,6 +63,46 @@ ui <- function(){
               title = "Homelessness Rates",
               width = 12,
               echarts4rOutput("plot3", height = 250)
+            )
+          )
+        ),
+        tabPanel(
+          title = "Statistics",
+          fluidPage(
+            box(
+              title = "Daily reported Homeless individuals vs count of NYC residents who tested positive for SARS-CoV-2", 
+              width = 12,
+              echarts4rOutput("covid_case_count", height = 300))
+            ,fluidRow(
+              box(
+                title = "1",
+                width = 8,
+                echarts4rOutput("pie_chart", height = 250))
+              # ,box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250)),
+              # box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250))
+            )
+            ,fluidRow(
+              box(
+                title = "1",
+                width = 3,
+                checkboxGroupInput("region2","select the region",
+                                   choices=borough_names,
+                                   selected=borough_names )
+              )
+              ,box(
+                title = "1",
+                width = 9,
+                plotlyOutput("reg", height = 250))
+              # ,box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250))
             )
           )
         ),
