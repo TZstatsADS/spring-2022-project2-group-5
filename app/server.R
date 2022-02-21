@@ -1,37 +1,5 @@
-# Install related packages 
-
-if (!require("shiny")) {
-    install.packages("shiny")
-    library(shiny)
-}
-if (!require("leaflet")) {
-    install.packages("leaflet")
-    library(leaflet)
-}
-if (!require("leaflet.extras")) {
-    install.packages("leaflet.extras")
-    library(leaflet.extras)
-}
-if (!require("dplyr")) {
-    install.packages("dplyr")
-    library(dplyr)
-}
-if (!require("magrittr")) {
-    install.packages("magrittr")
-    library(magrittr)
-}
-if (!require("mapview")) {
-    install.packages("mapview")
-    library(mapview)
-}
-if (!require("leafsync")) {
-    install.packages("leafsync")
-    library(leafsync)
-}
-if (!require("bs4Dash")){
-    install.packages("bs4Dash")
-    library(bs4Dash)
-}
+# Install and load related packages 
+source("../doc/helpers_server.R")
 
 ## Add dependencies
 use_deps <- function(){
@@ -43,8 +11,15 @@ use_deps <- function(){
 }
 
 #Data Processing
-covid_df <- read.csv('../data/covid_tidy.csv')
+print(getwd())
+covid_df <- read.csv('../data/covid_tidy.csv') 
 homeless_df <- read.csv('../data/homeless_tidy.csv')
+shelters_df <- read.csv('../data/shelters_tidy.csv')
+m <-readRDS(file = "../data/data_for_statistics/m.rds")
+data_borough <-readRDS(file = "../data/data_for_statistics/data_borough.rds")
+data_nyc <-readRDS(file = "../data/data_for_statistics/data_nyc.rds")
+most_recent_ind <-readRDS(file = "../data/data_for_statistics/most_recent_ind.rds")
+borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -81,21 +56,161 @@ server <- function(input, output) {
     
     
     
-    
+
     ## Statistics Tab section ##
-    set.seed(122)
-    histdata <- rnorm(500)
-    output$plot1 <- renderPlot({
-        data <- histdata[seq_len(input$slider)]
-        hist(data)
+    ## Statistics Tab section 1##
+    #covid_df <- covid_df %>% 
+        #mutate(date = ymd(covid_df$date)) %>% 
+        #mutate(date)
+    output$plot1 <- renderEcharts4r({
+        #data <- histdata[seq_len(input$slider)]
+        covid_df %>% 
+        e_charts(date) %>% 
+        e_line(case_count) %>% 
+        e_area(death_count) %>% 
+        e_hide_grid_lines() 
+    })
+    
+    output$plot3 <- renderEcharts4r({
+        homeless_df %>% 
+            filter(borough == input$neighborhood_select) %>% 
+            group_by(borough) %>% 
+            e_charts(date) %>% 
+            e_bar(count, stack = "borough") %>% 
+            e_hide_grid_lines()
+    })
+    
+    ## Statistics Tab section 2##
+    output$histogram_plot <- renderPlotly({
+      p <- ggplotly(
+        ggplot(most_recent_ind,
+               aes(y=individuals_sum, x = `Report Date`,fill= Borough)) +
+          geom_bar(position="dodge", stat="identity") 
+        #+theme_minimal()
+      )
+    })
+    output$pie_chart<-renderEcharts4r({
+      echarts4r::e_charts(most_recent_ind,Borough)|>
+        e_pie(individuals_sum,radius=c("50%","70%"))|>
+        e_legend(type="scroll",selector=c("all","inverse"),selectorPosition="start",orient="vertical",right=-10)|>
+        e_color(background="White")|>
+        e_tooltip(trigger="item")
+      
+    })
+    
+    output$covid_case_count<-renderEcharts4r({
+      echarts4r::e_charts(m,date)|>
+        e_line(`Total Individuals in Shelter`,y_index=0,smooth=T)|>
+        e_line(CASE_COUNT,y_index=1,smooth=T)|>
+        e_y_axis(y_index=0,min=42500,max=62500,name="# of reported individuals in shelter",formatter = "{value}")|>
+        e_y_axis(index=1,name="# of confirmed covid-19 patients/day",formatter = "{value}") |># here is "index"
+        e_datazoom(type="slider")|>
+        e_tooltip(trigger="item")|>
+        e_color(background="White")
+      
+    })
+    
+    output$reg<-renderPlotly({
+      ggplotly(
+        data_borough%>%filter(Borough %in% input$region2)%>%
+          ggplot(
+            aes(x = `Report Date`, y = individuals_sum,color= Borough)) +
+          geom_line()
+      )
     })
     
     ## Map Section ## 
-    mapdata <- homeless_df
     
-    output$plot2 <- renderPlot({
-        data <- mapdata[]
+    # shelters locations map
+    shelterIcon <- makeIcon(
+      iconUrl = "../doc/figs/house.png",
+      iconWidth = 38, iconHeight = 38
+    )
+    output$locationMap <- renderLeaflet({
+      leaflet(data=shelters_df) %>% addTiles() %>%
+        addMarkers(~longitude, ~latitude, popup = ~as.character(Comments),
+                   label = ~as.character(name), icon = shelterIcon)
+      
     })
     
     
+    # area map #
+    # set up map
+    geojson <- readLines("../doc/nyccomadd.json", warn = FALSE) %>%
+      paste(collapse = "\n") %>%
+      fromJSON(simplifyVector = FALSE)
+    
+    # Default styles for all features
+    geojson$style = list(
+      weight = 1,
+      color = "red",
+      opacity = 1,
+      fillOpacity = 0.8
+    )
+    
+    #set up dataset
+    hom <- homeless_df
+    hom$Month <- month(ymd(hom$date))
+    hom$Year <- year(ymd(hom$date))
+    
+    #Reactive
+    yearx<- reactive({input$Year})
+    monthx <- reactive({input$Month})
+
+    
+    # Final output
+    output$homelessArea <- renderLeaflet({
+      
+      homNewMonth<-hom[hom$Year == yearx() & hom$Month == monthx(), ]
+      homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
+      homNewMonth$count <- as.integer(homNewMonth$count)
+      
+      # Color by per-capita GDP using quantiles
+      pal=colorNumeric("YlOrRd", homNewMonth$count)
+      # Add a properties$style list to each feature
+      geojson$features <- lapply(geojson$features, function(feat) {
+        feat$properties$style <- list(
+          fillColor = pal(
+            # data$count with this CD
+            homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
+            #feat$properties$gdp_md_est / max(1, feat$properties$pop_est)
+          )
+        )
+        feat
+      })
+      
+      leaflet() %>% 
+        setView(lng = -74, lat = 40.71, zoom = 11) %>%
+        addTiles() %>%
+        addGeoJSON(geojson) %>%
+        #addPolygons(popup = ~1) %>%
+        addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
+                  title = "number of the homeless")      
+      
+    })
+
+    
+    # hotel map #
+    hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
+    Borx <- reactive({input$selecteBor})
+    
+    output$hotelMap <- renderLeaflet({
+      
+      hot = hot[hot$Borough == Borx(),]
+      leaflet(data=hot) %>% addTiles() %>%
+        addMarkers(~Longitude, ~Latitude, popup = ~as.character(OWNER_NAME))
+      
+    })
+    
+    
+    
+    #output$plot2 <- renderLeaflet({
+    #    leaflet() %>% 
+    #        #change map look: http://leaflet-extras.github.io/leaflet-providers/preview/index.html
+    #        addProviderTiles(providers$CartoDB.Positron) %>% 
+    #        addMarkers(data = shelters_df)
+    #})
 }
+
+#setwd("D:/OneDrive/Documents/5243/spring-2022-project2-group-5/app")
+#getwd()

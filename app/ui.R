@@ -1,24 +1,6 @@
-
-if (!require("shiny")) {
-  install.packages("shiny")
-  library(shiny)
-}
-if (!require("shinyWidgets")) {
-  install.packages("shinyWidgets")
-  library(shinyWidgets)
-}
-if (!require("shinythemes")) {
-  install.packages("shinythemes")
-  library(shinythemes)
-}
-if (!require("leaflet")) {
-  install.packages("leaflet")
-  library(leaflet)
-}
-if (!require("leaflet.extras")) {
-  install.packages("leaflet.extras")
-  library(leaflet.extras)
-}
+# Install and load related packages 
+source("../doc/helpers_ui.R")
+borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
 
 # Define UI for application
 ui <- function(){
@@ -46,12 +28,81 @@ ui <- function(){
         ),
         tabPanel(
           title = "Statistics",
-          fluidRow(
-            box(plotOutput("plot1", height = 250)),
-            
+          fluidPage(
+            fluidRow(
+              box(
+                title = "Date Range",
+                width = 6,
+                dateRangeInput("dates", "Date range"),
+                selectInput(inputId = "neighborhood_select", 
+                            label = "Select neighborhoods", 
+                            choices = list("Bronx",
+                                           "Brooklyn",
+                                           "Manhattan",
+                                           "Queens",
+                                           "Staten Island"),
+                            multiple = TRUE,
+                            selected = list("Bronx",
+                                       "Brooklyn",
+                                       "Manhattan",
+                                       "Queens",
+                                       "Staten Island")
+                            )
+              ),
+              box(
+                title = "Controls",
+                width = 6,
+                sliderInput("slider", "Number of observations", 1, 100, 50)
+              )),
             box(
-              title = "Controls",
-              sliderInput("slider", "Number of observations", 1, 100, 50)
+              title = "COVID Rates",
+              width = 12,
+              echarts4rOutput("plot1", height = 250)
+            ),
+            box(
+              title = "Homelessness Rates",
+              width = 12,
+              echarts4rOutput("plot3", height = 250)
+            )
+          )
+        ),
+        tabPanel(
+          title = "Statistics",
+          fluidPage(
+            box(
+              title = "Daily reported Homeless individuals vs count of NYC residents who tested positive for SARS-CoV-2", 
+              width = 12,
+              echarts4rOutput("covid_case_count", height = 300))
+            ,fluidRow(
+              box(
+                title = "1",
+                width = 8,
+                echarts4rOutput("pie_chart", height = 250))
+              # ,box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250)),
+              # box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250))
+            )
+            ,fluidRow(
+              box(
+                title = "1",
+                width = 3,
+                checkboxGroupInput("region2","select the region",
+                                   choices=borough_names,
+                                   selected=borough_names )
+              )
+              ,box(
+                title = "1",
+                width = 9,
+                plotlyOutput("reg", height = 250))
+              # ,box(
+              #   title = "1",
+              #   width = 6,
+              #   plotlyOutput("histogram_plot", height = 250))
             )
           )
         ),
@@ -61,13 +112,54 @@ ui <- function(){
             box(
               title = "Neighborhoods",
               selectInput("selecter", "Select neighborhoods", choices = list("Bronx" = 1, 
-                                                                             "Manhatten" = 2))
+                                                                             "Manhattan" = 2))
             ),
-            box(plotOutput("plot2", height = 250))
+            box(leafletOutput("plot2", height = 250))
+            
+    
             
           )
+        ),
+        tabPanel(
+          title = "The Homeless Map",
+          fluidRow(
+            # box for shelters locations
+            box(title = "shelter for the homeless"),
+            box(leafletOutput("locationMap")), 
+            
+            # box for homeless area
+            box("select a time", 
+              sliderInput(
+                "Year", "year", min = 2020, max = 2021, value = 2021,
+                step = 1
+              ),
+              sliderInput(
+                "Month", "month", min = 1, max = 12, value = 3,
+                step = 1
+              )
+            ),
+            box(
+              leafletOutput("homelessArea")
+            )
+          )
         )
+        ,
+        tabPanel(
+          title = "Hotel map",
+          fluidRow(
+            box(
+             title = "Borough",
+              selectInput("selecteBor", "Select Borough", choices = c("Bronx" = "BRONX", 
+                  "Queens" = "QUEENS", "Manhattan" = "MANHATTAN", "Brooklyn" = "BROOKLYN", 
+                  "Staten Island" = "STATEN IS"), selected = "Queens"
+              )
+            ),
+            box(leafletOutput("hotelMap"))
+          )
+        )
+        
       )
     )
   )
 }
+
