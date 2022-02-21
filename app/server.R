@@ -99,15 +99,45 @@ server <- function(input, output) {
     })
     
     output$covid_case_count<-renderEcharts4r({
-      echarts4r::e_charts(m,date)|>
-        e_line(`Total Individuals in Shelter`,y_index=0,smooth=T)|>
-        e_line(CASE_COUNT,y_index=1,smooth=T)|>
-        e_y_axis(y_index=0,min=42500,max=62500,name="# of reported individuals in shelter",formatter = "{value}")|>
-        e_y_axis(index=1,name="# of confirmed covid-19 patients/day",formatter = "{value}") |># here is "index"
-        e_datazoom(type="slider")|>
-        e_tooltip(trigger="item")|>
-        e_color(background="White")
-      
+      echarts4r::e_charts(m, date)|>
+        e_line(`Total Individuals in Shelter`,
+               y_index = 0,
+               smooth = FALSE,
+               symbol = "none")|>
+        e_line(CASE_COUNT,
+               y_index=1,
+               smooth = FALSE,
+               symbol = "none")|>
+        e_y_axis(y_index = 0,
+                 #min = 42500,
+                 #max = 62500,
+                 name = "Number of reported individuals in shelter",
+                 formatter = "{value}",
+                 nameLocation = "middle",
+                 nameTextStyle = list(padding = 40))|>
+        e_y_axis(index = 1,
+                 name = "Daily number of confirmed covid-19 patients",
+                 formatter = "{value}",
+                 nameLocation = "middle",
+                 nameTextStyle = list(padding = 40),
+                 axisLine = list(show = FALSE)) |> # here is "index"
+        e_x_axis(name = "Date",
+                 nameLocation = "middle",
+                 nameTextStyle = list(padding = 40),
+                 axisLabel = list(interval = 0),
+                 axisPointer = list(
+                    show = TRUE,
+                    lineStyle = list(
+                        color = "#cf53c2",
+                        type = "dashed",
+                        width = 1.5
+                )
+            )
+        ) |>
+        e_datazoom(type = "slider")|>
+        e_tooltip(trigger = "item")|>
+        e_color(background = "White") |>
+        e_hide_grid_lines()
     })
     
     output$reg<-renderPlotly({
