@@ -1,6 +1,8 @@
 # Install and load related packages 
 source("../lib/helpers_ui.R")
 borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
+benefits <- read.csv("../data/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
+                     stringsAsFactors = FALSE)
 
 # Define UI for application
 ui <- function(){
@@ -106,51 +108,31 @@ ui <- function(){
           ) # end of column
         ) # end of fluid row
       ), # end of title page
-        tabPanel(
-          title = "Statistics",
-          fluidPage(
-            box(
-              title = "Number of homeless individuals and confirmed COVID-19 cases", 
-              width = 12,
-              echarts4rOutput("covid_case_count", 
-                              height = 350)
+      tabPanel(
+              title = "Statistics",
+              fluidPage(
+                      box(
+                              title = "Daily reported Homeless individuals vs count of NYC residents who tested positive for SARS-CoV-2", 
+                              width = 12,
+                              echarts4rOutput("covid_case_count", height = 300))
+                      ,box(
+                              title = "Average Homlessness in NYC shelters by Type since COVID-19",
+                              width = 12,
+                              echarts4rOutput("type_histogram", height = 300))
               ),
-            fluidRow(
-              box(
-                title = "Borough",
-                width = 2,
-                checkboxGroupInput("region2",
-                                   "Select borough",
-                                   choices = borough_names,
-                                   selected = borough_names)
-                                   #height = 350)
-              ),
-              box(
-                title = "Proportion of homelessness by bourough",
-                width = 5,
-                echarts4rOutput("pie_chart", height = 350)
-                ),
-              box(
-                title = "Homeless rates over time",
-                width = 5,
-                plotlyOutput("reg", height = 350)
+              fluidRow(
+                      box(
+                              title = "Proportion of homelessness by bourough",
+                              width = 5,
+                              echarts4rOutput("pie_chart", height = 340)
+                      ),
+                      box(
+                              title = "Homeless individuals by borough over time",
+                              width = 7,
+                              echarts4rOutput("region", height = 360)
+                      )
               )
-              
-              # ,box(
-              #   title = "1",
-              #   width = 6,
-              #   plotlyOutput("histogram_plot", height = 250)),
-              # box(
-              #   title = "1",
-              #   width = 6,
-              #   plotlyOutput("histogram_plot", height = 250))
-              # box(
-              #   title = "1",
-              #   width = 6,
-              #   plotlyOutput("histogram_plot", height = 250))
-            )
-          )
-        ),
+      ),
         tabPanel(
           title = "Affected Areas",
           fluidRow(
@@ -169,8 +151,7 @@ ui <- function(){
                 leafletOutput("homelessArea")
             )
           )
-        )
-        ,
+        ),
         tabPanel(
           title = "Resources",
           fluidRow(
