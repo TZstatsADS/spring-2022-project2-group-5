@@ -12,6 +12,8 @@ ui <- function(){
     #   html = span(hostess$get_loader()),
     # ),
     header = bs4DashNavbar(
+      title = htmlOutput("icu"),
+      titleWidth = 30,
       fixed = TRUE
     ),
     sidebar = bs4DashSidebar(disable = TRUE),
