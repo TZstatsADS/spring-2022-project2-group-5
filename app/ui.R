@@ -1,5 +1,5 @@
 # Install and load related packages 
-source("../doc/helpers_ui.R")
+source("../lib/helpers_ui.R")
 borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
 
 # Define UI for application
