@@ -30,7 +30,7 @@ ui <- function(){
             column(6,
             h1(id = "title","Where you can help during COVID-19", align = "center"),
             tags$style(HTML("#title{margin: 1em 0 0.5em 0;
-                            font-size: 36px;
+                            font-size: 30px;
                             line-height: 36px;
                             font-style: bold; 
                             font-family: 'Ultra', sans-serif;
@@ -58,7 +58,7 @@ ui <- function(){
             tags$style(HTML("#body{
                             margin: 1em 0 0.5em 0;
 	                          color: #343434;
-	                          font-size: 18px;
+	                          font-size: 15px;
 	                          line-height: 20px;
 	                          font-family: 'Josefin Sans', sans-serif;
             }")),
@@ -71,7 +71,7 @@ ui <- function(){
             tags$style(HTML("#bullet{
                             margin: 1em 0 0.5em 0;
 	                          color: #343434;
-	                          font-size: 18px;
+	                          font-size: 15px;
 	                          line-height: 20px;
 	                          font-weight: bold;
 	                          font-family: 'Josefin Sans', sans-serif;
