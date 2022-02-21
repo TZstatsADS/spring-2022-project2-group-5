@@ -70,14 +70,32 @@ ui <- function(){
           title = "Statistics",
           fluidPage(
             box(
-              title = "Daily reported Homeless individuals vs count of NYC residents who tested positive for SARS-CoV-2", 
+              title = "Number of homeless individuals and confirmed COVID-19 cases", 
               width = 12,
-              echarts4rOutput("covid_case_count", height = 300))
-            ,fluidRow(
+              echarts4rOutput("covid_case_count", 
+                              height = 350)
+              ),
+            fluidRow(
               box(
-                title = "1",
-                width = 8,
-                echarts4rOutput("pie_chart", height = 250))
+                title = "Borough",
+                width = 2,
+                checkboxGroupInput("region2",
+                                   "Select borough",
+                                   choices = borough_names,
+                                   selected = borough_names)
+                                   #height = 350)
+              ),
+              box(
+                title = "Proportion of homelessness by bourough",
+                width = 5,
+                echarts4rOutput("pie_chart", height = 350)
+                ),
+              box(
+                title = "Homeless rates over time",
+                width = 5,
+                plotlyOutput("reg", height = 350)
+              )
+              
               # ,box(
               #   title = "1",
               #   width = 6,
@@ -86,20 +104,7 @@ ui <- function(){
               #   title = "1",
               #   width = 6,
               #   plotlyOutput("histogram_plot", height = 250))
-            )
-            ,fluidRow(
-              box(
-                title = "1",
-                width = 3,
-                checkboxGroupInput("region2","select the region",
-                                   choices=borough_names,
-                                   selected=borough_names )
-              )
-              ,box(
-                title = "1",
-                width = 9,
-                plotlyOutput("reg", height = 250))
-              # ,box(
+              # box(
               #   title = "1",
               #   width = 6,
               #   plotlyOutput("histogram_plot", height = 250))
