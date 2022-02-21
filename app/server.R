@@ -277,12 +277,31 @@ server <- function(input, output) {
                          stringsAsFactors = FALSE)
     
     output$resourceTable <- renderDataTable(
+      datatable(benefits %>% 
+                  filter(page_type == input$selectType) %>% 
+                  filter(program_category == input$selectCategory) %>% 
+                  select(program_name, 
+                         population_served,
+                         brief_excerpt
+                          ) %>% 
+                  rename(Program = program_name,
+                         Population = population_served,
+                         Description = brief_excerpt),
+                escape = FALSE,
+                selection = 'single'
+    )
+    )
+    
+    output$apply <- renderDataTable(
       benefits %>% 
         filter(page_type == input$selectType) %>% 
         filter(program_category == input$selectCategory) %>% 
-        select(program_name, population_served, brief_excerpt),
+        slice(input$resourceTable_rows_selected) %>% 
+        rename(Instructions = how_to_apply_summary) %>% 
+        select(Instructions)
+        ,
       escape = FALSE
-    )
+      )
     
     # hotel map # 
     hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
