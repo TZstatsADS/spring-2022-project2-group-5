@@ -31,6 +31,10 @@ if (!require("lubridate")){
   install.packages("lubridate")
   library(lubridate)
 }
+if (!require("rsconnect")){
+  install.packages("rsconnect")
+  library(rsconnect)
+}
 
 # Define UI for application
 ui <- function(){

@@ -56,7 +56,10 @@ if (!require("jsonlite")){
   install.packages("jsonlite")
   library(jsonlite)
 }
-
+if (!require("rsconnect")){
+  install.packages("rsconnect")
+  library(rsconnect)
+}
 
 
 
@@ -207,7 +210,7 @@ server <- function(input, output) {
     })
 
     
-    #hotel map
+    # hotel map #
     hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
     Borx <- reactive({input$selecteBor})
     
