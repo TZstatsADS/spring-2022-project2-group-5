@@ -48,11 +48,10 @@ ui <- function(){
                             margin: 1em 0 0.5em 0;
 	                          color: #00caa6;
 	                          font-size: 26px;
-	                          line-height: 40px;
+	                          line-height: 36px;
 	                          font-weight: bold;
 	                          font-family: 'Josefin Sans', sans-serif;
             }")),
-            br(),
             p(id = "body",
                "At the beginning of 2020, the spread of Covid-19 has an effect to the world as well as New York City.",
                "In this app we tend to focus on the effect of homelessness in NY during pandenmic.",
