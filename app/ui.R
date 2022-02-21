@@ -20,10 +20,23 @@ ui <- function(){
           title = "Home",
           box(
             width = 12,
-            title = tags$b("Information"),
+            title = tags$b("Introduction"),
             maximizable = TRUE,
             elevation = 3,
-            collapsible = FALSE
+            collapsible = FALSE,
+            h1(id = "title","Where you can help during COVID-19", align = "center"),
+            tags$style(HTML("#title{margin: 1em 0 0.5em 0;
+                            font-size: 36px;
+                            line-height: 36px;
+                            font-style: bold; 
+                            font-family: 'Ultra', sans-serif;
+                            color: #343434;
+                            font-weight: normal;
+                            text-transform: uppercase;
+                            text-shadow: 0 2px white, 0 3px #777;
+                            }")),
+            h2(id ="subtitle", "Homelessness during pandenmic", align = "center"),
+            div(img(src = "homeless.gif", width = '50%'))
           )
         ),
         tabPanel(
