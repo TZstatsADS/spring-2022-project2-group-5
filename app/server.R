@@ -1,5 +1,5 @@
 # Install and load related packages 
-source("../doc/helpers_server.R")
+source("../lib/helpers_server.R")
 
 ## Add dependencies
 use_deps <- function(){
