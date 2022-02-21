@@ -186,21 +186,30 @@ ui <- function(){
                                       "Staten Island" = "STATEN IS"), 
                           selected = "Queens"
               ),
-              selectInput("selectPrice",
-                          "Price",
-                          choices = c("option 1",
-                                      "option 2")),
+              selectInput("selectType",
+                          "Type",
+                          choices = unique(benefits$page_type),
+                          selected = "Benefit"
+                          ),
               selectInput("selectCategory",
                           "Category",
-                          choices = c("option 1",
-                                      "otpion 2"))
-            ),
-            box(title = "Shelters",
-                leafletOutput("locationMap", height = 350),
-                width = 9),
-            box(title = "Hotels",
-                width = 12,
-                leafletOutput("hotelMap", height = 350))
+                          choices = unique(benefits$program_category),
+                          selected = "Food"
+                          )),
+            box(
+              width = 9,
+              title = "Resources",
+              collapsible = TRUE,
+              dataTableOutput("resourceTable")
+              ),
+            box(
+              title = "Shelters",
+              leafletOutput("locationMap", height = 350),
+              width = 12),
+            box(
+              title = "Hotels",
+              width = 12,
+              leafletOutput("hotelMap", height = 350))
           )
         )
         

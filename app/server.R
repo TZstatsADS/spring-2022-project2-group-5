@@ -223,8 +223,19 @@ server <- function(input, output) {
       
     })
 
+    #Resources Table
+    benefits <- read.csv("../data/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
+                         stringsAsFactors = FALSE)
     
-    # hotel map #
+    output$resourceTable <- renderDataTable(
+      benefits %>% 
+        filter(page_type == input$selectType) %>% 
+        filter(program_category == input$selectCategory) %>% 
+        select(program_name, population_served, brief_excerpt),
+      escape = FALSE
+    )
+    
+    # hotel map # 
     hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
     Borx <- reactive({input$selecteBor})
     
