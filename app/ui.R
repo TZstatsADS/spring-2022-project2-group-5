@@ -211,10 +211,37 @@ ui <- function(){
               width = 6,
               leafletOutput("hotelMap", height = 350))
           )
-        )
-        
-      )
-    )
-  )
-}
+        ),
+      tabPanel(
+        title = "About",
+        mainPanel(width=12, h1(strong("ABOUT"), align="center")),     
+        mainPanel(width=12, h2(strong("Contributors"), align="center")),
+        h4("Haozhong Zheng, hz2694@columbia.edu", align="center"),
+        h4("Huiying Wang, hw2816@columbia.edu", align = "center"),
+        h4("Jiahao Shao, js5954@columbia.edu", align = "center"),
+        h4("Sarah Quinn Kurihara, sqk2003@columbia.edu", align = "center"),
+        br(),
+        mainPanel(width = 12, h2(strong("Data Resrouce"), align = "center")),
+        h4(a("Associated Address by Borough and Community District", href =
+        "https://data.cityofnewyork.us/Social-Services/Associated-Address-by-Borough-and-Community-Distri/ur7y-ziyb"),
+        align = "center"),
+        h4(a("COVID-19 Daily Counts of Cases, Hospitalizations, and Deaths",
+        href = "https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3"),
+        align = "center"),
+        h4(a("Directory Of Homeless Drop- In Centers", href = 
+               "https://data.cityofnewyork.us/Social-Services/Directory-Of-Homeless-Drop-In-Centers/bmxf-3rd4"),
+        align = "center"),
+        h4(a("DHS Daily Report", href = "https://data.cityofnewyork.us/Social-Services/DHS-Daily-Report/k46n-sa2m"),
+        align = "center"),
+        br(),
+        mainPanel(width = 12, h2(strong("Github"), align = "center")),
+        h4("The project for this app is on ", a("Github",
+        href = "https://github.com/TZstatsADS/spring-2022-project2-group-5"), ".", 
+        img(src = "github.png", width = 50, height = 50),
+        align = "center")
+        ) # end of tabpanel
+      ) # end of tabsetPanel
+    ) # end of bs4DashBody
+  ) # end of bs4DashPage
+} # end of ui
 
