@@ -252,7 +252,7 @@ server <- function(input, output) {
       #homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
       #homNewMonth$count <- as.integer(homNewMonth$count)
       
-      # Color by per-capita GDP using quantiles
+      # Color it
       pal=colorNumeric("YlOrRd", homNewMonth$count)
       # Add a properties$style list to each feature
       geojson$features <- lapply(geojson$features, function(feat) {
@@ -260,7 +260,6 @@ server <- function(input, output) {
           fillColor = pal(
             # data$count with this CD
             homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
-            #feat$properties$gdp_md_est / max(1, feat$properties$pop_est)
           )
         )
         feat
@@ -320,15 +319,9 @@ server <- function(input, output) {
       
     })
     
-    
-    
-    #output$plot2 <- renderLeaflet({
-    #    leaflet() %>% 
-    #        #change map look: http://leaflet-extras.github.io/leaflet-providers/preview/index.html
-    #        addProviderTiles(providers$CartoDB.Positron) %>% 
-    #        addMarkers(data = shelters_df)
-    #})
+
 }
 
-#setwd("D:/OneDrive/Documents/5243/spring-2022-project2-group-5/app")
-#getwd()
+#lobstr::mem_used()
+
+#rsconnect::configureApp("5243_Project2", size="xlarge")
