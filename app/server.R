@@ -1,5 +1,5 @@
 # Install and load related packages 
-source("../lib/helpers_server.R")
+source("www/helpers_server.R")
 
 ## Add dependencies
 use_deps <- function(){
@@ -12,15 +12,15 @@ use_deps <- function(){
 
 #Data Processing
 print(getwd())
-covid_df <- read.csv('../data/covid_tidy.csv') 
-homeless_df <- read.csv('../data/homeless_tidy.csv')
-shelters_df <- read.csv('../data/shelters_tidy.csv')
-m <-readRDS(file = "../data/data_for_statistics/m.rds")
-data_borough <-readRDS(file = "../data/data_for_statistics/data_borough.rds")
-data_nyc <-readRDS(file = "../data/data_for_statistics/data_nyc.rds")
-most_recent_ind <-readRDS(file = "../data/data_for_statistics/most_recent_ind.rds")
-borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
-homeless_by_type<-readRDS(file = "../data/data_for_statistics/homeless_by_type.rds")
+covid_df <- read.csv('www/covid_tidy.csv') 
+homeless_df <- read.csv('www/homeless_tidy.csv')
+shelters_df <- read.csv('www/shelters_tidy.csv')
+m <-readRDS(file = "www/data_for_statistics/m.rds")
+data_borough <-readRDS(file = "www/data_for_statistics/data_borough.rds")
+data_nyc <-readRDS(file = "www/data_for_statistics/data_nyc.rds")
+most_recent_ind <-readRDS(file = "www/data_for_statistics/most_recent_ind.rds")
+borough_names <-readRDS(file = "www/data_for_statistics/borough_names.rds")
+homeless_by_type<-readRDS(file = "www/data_for_statistics/homeless_by_type.rds")
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -205,7 +205,7 @@ server <- function(input, output) {
     
     # shelters locations map
     shelterIcon <- makeIcon(
-      iconUrl = "../doc/figs/house.png",
+      iconUrl = "www/figs/house.png",
       iconWidth = 38, iconHeight = 38
     )
     output$locationMap <- renderLeaflet({
@@ -219,7 +219,7 @@ server <- function(input, output) {
     
     # area map #
     # set up map
-    geojson <- readLines("../doc/nyccomadd.json", warn = FALSE) %>%
+    geojson <- readLines("www/nyccomadd.json", warn = FALSE) %>%
       paste(collapse = "\n") %>%
       fromJSON(simplifyVector = FALSE)
     
@@ -277,7 +277,7 @@ server <- function(input, output) {
     })
 
     #Resources Table
-    benefits <- read.csv("../data/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
+    benefits <- read.csv("www/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
                          stringsAsFactors = FALSE)
     
     output$resourceTable <- renderDataTable(
@@ -308,7 +308,7 @@ server <- function(input, output) {
       )
     
     # hotel map # 
-    hot <- read.csv("../data/Hotels_Properties_Citywide.csv")
+    hot <- read.csv("www/Hotels_Properties_Citywide.csv")
     Borx <- reactive({input$selecteBor})
     
     output$hotelMap <- renderLeaflet({

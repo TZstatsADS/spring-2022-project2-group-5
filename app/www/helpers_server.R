@@ -81,6 +81,10 @@ if (!require("plotrix")){
   install.packages("plotrix")
   library(plotrix)
 }
+if (!require("DT")){
+        install.packages("DT")
+        library(DT)
+}
 
 
 

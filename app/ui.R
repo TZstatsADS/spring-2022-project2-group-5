@@ -1,7 +1,7 @@
 # Install and load related packages 
-source("../lib/helpers_ui.R")
-borough_names <-readRDS(file = "../data/data_for_statistics/borough_names.rds")
-benefits <- read.csv("../data/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
+source("www/helpers_ui.R")
+borough_names <-readRDS(file = "www/data_for_statistics/borough_names.rds")
+benefits <- read.csv("www/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
                      stringsAsFactors = FALSE)
 
 # Define UI for application
