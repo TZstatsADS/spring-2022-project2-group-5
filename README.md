@@ -7,6 +7,8 @@
 
 ![screenshot](doc/figs/homeless.gif)
 
+![screenshot](doc/figs/covid.gif)
+
 Term: Spring 2022
 
 + Team #5
