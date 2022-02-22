@@ -18,7 +18,7 @@ Term: Spring 2022
 	+ Wang, Huiying hw2816@columbia.edu
 	+ Zheng, Haozhong hz2694@columbia.edu
 
-+ **App link**: [app](website) 
++ **App link**: [app](https://545089467-shao.shinyapps.io/5243_Project2/) 
 
 
 + **Project summary**: We focus on the homelessness of New York during pandenmic from March of 2020 to the end of 2021. We develop this shiny app to illustrate our strategy about how to help homeless people. We provide visualization of statistics about covid and homelessness as well as heatmap of homeless people using 59 [community districts](https://communityprofiles.planning.nyc.gov/) defined by NYC Department of City Planning. We also give our suggestions on how to help these people with visualiztion methods. 
