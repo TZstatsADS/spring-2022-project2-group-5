@@ -1,3 +1,7 @@
+server <- function(input, output){
+        options(shiny.maxRequestSize=60*1024^2)
+}
+
 # Install and load related packages 
 source("www/helpers_server.R")
 
@@ -9,6 +13,7 @@ use_deps <- function(){
         waiter::use_hostess()
     )
 }
+
 
 #Data Processing
 print(getwd())
@@ -274,6 +279,7 @@ server <- function(input, output) {
                   title = "number of the homeless")      
       
     })
+    
 
     #Resources Table
     benefits <- read.csv("www/NYC_Benefits_Platform__Benefits_and_Programs_Dataset.csv", 
@@ -323,5 +329,3 @@ server <- function(input, output) {
 }
 
 #lobstr::mem_used()
-
-#rsconnect::configureApp("5243_Project2", size="xlarge")
