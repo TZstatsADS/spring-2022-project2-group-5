@@ -105,9 +105,21 @@ ui <- function(){
               " , and ",
               a(href = "https://communityprofiles.planning.nyc.gov/queens/12", "Queens 12"),
               ".")
-           )# end of box
-          ) # end of column
-        ) # end of fluid row
+           )# end of column
+          ) # end of fluid row
+        ),
+        box(
+          width = 12,
+          title = tags$b("Covid-19 Situation"),
+          maximizable = TRUE,
+          elevation = 3,
+          collapsible = FALSE,
+          fluidRow(
+            column(10,
+            tags$div(img(src = "covid.gif", width = 1200, height = 300), style="text-align: center;")
+            ) # end of column
+            ) # end of fluid row
+          )# end of box
       ), # end of title page
       tabPanel(
               title = "Statistics",
