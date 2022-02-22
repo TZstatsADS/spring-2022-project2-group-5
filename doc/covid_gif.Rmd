@@ -38,9 +38,10 @@ covid %>%
   # tidy data
   pivot_longer(cols = c(case_count, death_count), names_to = "count", values_to = "number") %>%
   arrange(date) %>% # arrange by date
-  ggplot(aes(x = date, y = number, group = count, color = count)) +
+  ggplot(aes(x = date, y = number, color = count)) +
   geom_line(size = 3) +
   geom_point() +
+  facet_wrap(~count, scales = "free") +
   theme_covid() +
   labs(title = "Covid-19 case & death count",
   x = "Date", 
@@ -48,6 +49,6 @@ covid %>%
   scale_color_manual( values =  c("darkorange", "darkorchid4")) +
   transition_reveal(date) -> covid_ani
 
-animate(covid_ani, duration = 10,fps = 20, width =1000, height = 300, renderer = gifski_renderer())
+animate(covid_ani, duration = 10,fps = 20, width =1500, height = 300, renderer = gifski_renderer())
 anim_save("figs/covid.gif")
 ```
