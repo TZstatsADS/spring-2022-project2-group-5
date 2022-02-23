@@ -79,7 +79,7 @@ ggplot() +
 )
 
 # save files
-ggsave(filename = paste0(stringr::str_pad(i, 3, pad = "0"), ".png"), path = "figs/")
+ggsave(filename = paste0(stringr::str_pad(i, 3, pad = "0"), ".png"), path = "figs/homeless/")
 }
 ```
 
@@ -88,5 +88,5 @@ imgs <- list.files("figs/homeless", full.names = TRUE)
 lapply(imgs, image_read) %>%
   image_join() %>%
   image_animate(fps = 5) %>%  # can change speed of gif
-  image_write("homeless.gif")
+  image_write("figs/homeless.gif")
 ```
