@@ -219,17 +219,17 @@ server <- function(input, output) {
     
     # area map #
     # set up map
-    # geojson <- readLines("www/nyccomadd.json", warn = FALSE) %>%
-    #   paste(collapse = "\n") %>%
-    #   fromJSON(simplifyVector = FALSE)
+     geojson <- readLines("www/nyccomadd.json", warn = FALSE) %>%
+       paste(collapse = "\n") %>%
+       fromJSON(simplifyVector = FALSE)
     
     # Default styles for all features
-    # geojson$style = list(
-    #   weight = 1,
-    #   color = "red",
-    #   opacity = 1,
-    #   fillOpacity = 0.8
-    # )
+     geojson$style = list(
+       weight = 0.15,
+       color = "red",
+       opacity = 1,
+       fillOpacity = 0.9
+     )
     
     #set up dataset
     
@@ -256,33 +256,33 @@ server <- function(input, output) {
       # Color it
       pal=colorNumeric("YlOrRd", homNewMonth$count)
       # Add a properties$style list to each feature
-      # geojson$features <- lapply(geojson$features, function(feat) {
-      #   feat$properties$style <- list(
-      #     fillColor = pal(
-      #       # data$count with this CD
-      #       homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
-      #     )
-      #   )
-      #   feat
-      # })
+       geojson$features <- lapply(geojson$features, function(feat) {
+         feat$properties$style <- list(
+           fillColor = pal(
+             # data$count with this CD
+             homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
+           )
+         )
+         feat
+       })
       # 
       
-      spatialPolygon <- rgdal::readOGR("www/nyccomadd.json") 
-      leaflet(spatialPolygon) %>%
-        addProviderTiles(providers$CartoDB.Positron) %>%
-        addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.7,
-                    fillColor = ~pal(homNewMonth$count),
-                    label = homNewMonth$count) %>%
-        addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0)
+      #spatialPolygon <- rgdal::readOGR("www/nyccomadd.json") 
+      #leaflet(spatialPolygon) %>%
+      #  addProviderTiles(providers$CartoDB.Positron) %>%
+      #  addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.7,
+      #              fillColor = ~pal(homNewMonth$count),
+      #              label = homNewMonth$count) %>%
+      #  addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0)
       
       
-      # leaflet(spatialPolygon) %>%
-      #   setView(lng = -74, lat = 40.71, zoom = 10) %>%
-      #   addProviderTiles(providers$CartoDB.Positron) %>%
-      #   # addGeoJSON(geojson) %>%
-      #   #addPolygons(popup = ~1) %>%
-      #   addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
-      #             title = "number of the homeless")
+       leaflet() %>%
+         setView(lng = -74, lat = 40.71, zoom = 10) %>%
+         addProviderTiles(providers$CartoDB.Positron) %>%
+         addGeoJSON(geojson) %>%
+         #addPolygons(popup = ~1) %>%
+         addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
+                   title = "number of the homeless")
 
     })
     
@@ -346,3 +346,4 @@ server <- function(input, output) {
 }
 
 #lobstr::mem_used()
+#setwd("D:/OneDrive/Documents/5243/spring-2022-project2-group-5/app")
