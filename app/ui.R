@@ -225,7 +225,7 @@ ui <- function(){
                                         h4("Jiahao Shao, js5954@columbia.edu", align = "center"),
                                         h4("Sarah Quinn Kurihara, sqk2003@columbia.edu", align = "center"),
                                         br(),
-                                        mainPanel(width = 12, h2(strong("Data Resrouce"), align = "center")),
+                                        mainPanel(width = 12, h2(strong("Data Resource"), align = "center")),
                                         h4(a("Associated Address by Borough and Community District", href =
                                                      "https://data.cityofnewyork.us/Social-Services/Associated-Address-by-Borough-and-Community-Distri/ur7y-ziyb"),
                                            align = "center"),
