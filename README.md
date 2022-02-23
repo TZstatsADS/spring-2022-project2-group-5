@@ -1,4 +1,4 @@
-# Project 2: Shiny App Development
+# Project 2: Shiny App Development [App link](https://545089467-shao.shinyapps.io/5243_Project2/)
 
 ### [Project Description](doc/project2_desc.md)
 
