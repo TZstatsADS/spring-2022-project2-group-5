@@ -36,9 +36,8 @@ server <- function(input, output) {
     #     text_color = "black",
     #     class = "label-center",
     #     center_page = TRUE,
-    #     progress_type = "fill",
-    #     fill_color = hostess_gradient(angle = 90,
-    #                                   colors = c("#FFE469"))
+    #     progress_type = "fill"
+    #     #fill_color = hostess_gradient(angle = 90, colors = c("#FFE469"))
     # )
     # hostess <- Hostess$new(infinite =TRUE)$set_loader(loadme)
     # w <- waiter::Waiter$new(
@@ -62,12 +61,8 @@ server <- function(input, output) {
   output$icu <- renderText({
     HTML("<b>Welcome to the NYC Homelessness Dashboard</b>")
   })
-    ## Homepage section ##
     
-    
-    
-
-    ## Statistics Tab section ##
+  
     ## Statistics Tab section 1##
     #covid_df <- covid_df %>% 
         #mutate(date = ymd(covid_df$date)) %>% 
@@ -224,19 +219,20 @@ server <- function(input, output) {
     
     # area map #
     # set up map
-    geojson <- readLines("www/nyccomadd.json", warn = FALSE) %>%
-      paste(collapse = "\n") %>%
-      fromJSON(simplifyVector = FALSE)
+    # geojson <- readLines("www/nyccomadd.json", warn = FALSE) %>%
+    #   paste(collapse = "\n") %>%
+    #   fromJSON(simplifyVector = FALSE)
     
     # Default styles for all features
-    geojson$style = list(
-      weight = 1,
-      color = "red",
-      opacity = 1,
-      fillOpacity = 0.8
-    )
+    # geojson$style = list(
+    #   weight = 1,
+    #   color = "red",
+    #   opacity = 1,
+    #   fillOpacity = 0.8
+    # )
     
     #set up dataset
+    
     hom <- homeless_df
     hom$Month <- month(ymd(hom$date))
     hom$Year <- year(ymd(hom$date))
@@ -248,36 +244,46 @@ server <- function(input, output) {
     
     # Final output
     output$homelessArea <- renderLeaflet({
-      
-      homNewMonth <- hom %>% 
-        filter(date == ceiling_date(ymd(input$date), 'month') - 1) %>% 
+
+      homNewMonth <- hom %>%
+        filter(date == ceiling_date(ymd(input$date), 'month') - 1) %>%
         arrange(BoroCD) %>%
         mutate(count = as.integer(count))
-      
+
       #homNewMonth <- homNewMonth[order(homNewMonth$BoroCD),]
       #homNewMonth$count <- as.integer(homNewMonth$count)
-      
+
       # Color it
       pal=colorNumeric("YlOrRd", homNewMonth$count)
       # Add a properties$style list to each feature
-      geojson$features <- lapply(geojson$features, function(feat) {
-        feat$properties$style <- list(
-          fillColor = pal(
-            # data$count with this CD
-            homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
-          )
-        )
-        feat
-      })
+      # geojson$features <- lapply(geojson$features, function(feat) {
+      #   feat$properties$style <- list(
+      #     fillColor = pal(
+      #       # data$count with this CD
+      #       homNewMonth[homNewMonth$BoroCD == feat$properties$BoroCD,]$count
+      #     )
+      #   )
+      #   feat
+      # })
+      # 
       
-      leaflet() %>% 
-        setView(lng = -74, lat = 40.71, zoom = 10) %>%
+      spatialPolygon <- rgdal::readOGR("www/nyccomadd.json") 
+      leaflet(spatialPolygon) %>%
         addProviderTiles(providers$CartoDB.Positron) %>%
-        addGeoJSON(geojson) %>%
-        #addPolygons(popup = ~1) %>%
-        addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
-                  title = "number of the homeless")      
+        addPolygons(stroke = FALSE, smoothFactor = 0.3, fillOpacity = 0.7,
+                    fillColor = ~pal(homNewMonth$count),
+                    label = homNewMonth$count) %>%
+        addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0)
       
+      
+      # leaflet(spatialPolygon) %>%
+      #   setView(lng = -74, lat = 40.71, zoom = 10) %>%
+      #   addProviderTiles(providers$CartoDB.Positron) %>%
+      #   # addGeoJSON(geojson) %>%
+      #   #addPolygons(popup = ~1) %>%
+      #   addLegend(pal = pal, values = homNewMonth$count, opacity = 1.0,
+      #             title = "number of the homeless")
+
     })
     
 
@@ -292,25 +298,36 @@ server <- function(input, output) {
                   select(program_name, 
                          population_served,
                          brief_excerpt
-                          ) %>% 
+                  ) %>% 
                   rename(Program = program_name,
                          Population = population_served,
                          Description = brief_excerpt),
                 escape = FALSE,
                 selection = 'single'
-    )
+      )
     )
     
-    output$apply <- renderDataTable(
-      benefits %>% 
-        filter(page_type == input$selectType) %>% 
-        filter(program_category == input$selectCategory) %>% 
-        slice(input$resourceTable_rows_selected) %>% 
-        rename(Instructions = how_to_apply_summary) %>% 
-        select(Instructions)
-        ,
-      escape = FALSE
-      )
+    output$apply <- renderDataTable({
+      if(!is.null(input$resourceTable_rows_selected)){
+        datatable(benefits %>% 
+           filter(page_type == input$selectType) %>% 
+           filter(program_category == input$selectCategory) %>% 
+           slice(input$resourceTable_rows_selected) %>% 
+           rename(Instructions = how_to_apply_summary) %>% 
+           select(Instructions),
+           escape = FALSE, 
+           options = list(searching = FALSE,
+                          info = FALSE,
+                          lengthChange = FALSE,
+                          paging = FALSE)
+        )}
+      else{
+        shiny::showNotification("Click on a resource to learn more", 
+                                type = "message",
+                                duration = NA)
+        NULL
+      }
+    })
     
     # hotel map # 
     hot <- read.csv("www/Hotels_Properties_Citywide.csv")
