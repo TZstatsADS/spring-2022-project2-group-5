@@ -60,7 +60,7 @@ homeless_tidy %>% # Filter district with unkown CD
   filter(community_district == "Unknown CD") %>%
   mutate(community_district = ifelse(borough == "Bronx", "26",
                                ifelse(borough == "Brooklyn", "55",
-                               ifelse(borough == "Manhattan", "16",
+                               ifelse(borough == "Manhattan", "64",
                                ifelse(borough == "Queens", "82", "95"))))) -> df
 
 df %>%
